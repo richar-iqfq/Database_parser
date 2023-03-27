@@ -6,7 +6,7 @@ class extractor():
     '''
     Extract the data from the HF and CI files into csv contained inside output_path
 
-    Parameters
+    Attributes
     ----------
     output_path (`str`):
         output_path for the parsed data
@@ -14,7 +14,7 @@ class extractor():
     Methods
     -------
     extract(unify=True, output_keywords='AA')
-    Extract the data from the HF and CI files
+        Extract the data from the HF and CI files
 
     unify (`bool`)
         if True, mix all results inside one csv file

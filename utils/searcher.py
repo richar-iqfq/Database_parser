@@ -8,8 +8,8 @@ Extract the information from the log files in the input_path given to the class
 
 class main_log_reader():
     '''
-    Parameters:
-    ---------------------------------------------
+    Attributes
+    ----------
     input_path (`str`):
         Folder with the log files to calculate
 

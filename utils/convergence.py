@@ -10,7 +10,7 @@ class convergence_writter():
     '''
     Search if there are come molecules with no convergence
 
-    Parameters
+    Attributes
     ----------
     database (`str`):
         database path with the required info (Err1, Err2, etc)
@@ -43,7 +43,7 @@ class convergence_analyzer():
     '''
     Check database results to find errors in convergence
 
-    Parameters
+    Attributes
     ----------
     re_path (`str`):
         Re type path to search recurrence. Example >> r'a-[0-9.]+_results'
@@ -56,7 +56,6 @@ class convergence_analyzer():
     analyze()
         Run analysis
     '''
-
     def __init__(self, re_path, criteria=1E-3):
         self.criteria = criteria
         self.files = []
@@ -83,7 +82,6 @@ class convergence_analyzer():
         Returns
         -------
         List of tuples of type (alpha, type, mean)
-        
         '''
         results = []
 
@@ -104,11 +102,34 @@ class convergence_analyzer():
         return results
     
 class convergence_counter():
+    '''
+    Count the number of molecules with no-convergence in alpha database
+    
+    Methods
+    -------
+    get_count(alpha):
+        return a list with the b1-b5 no convergence count
+
+    write_count(alpha_list):
+        save a csv file with the count for all the alpha folders given
+    '''
     def __init__(self):
         root = os.getcwd()
         self.path = os.path.join(root, 'results', 'optimization')
 
     def get_count(self, alpha):
+        '''
+        Obtain the no convergence count for alpha given
+
+        Parameter
+        ---------
+        alpha (`float`):
+            alpha value to check count
+
+        Returns
+        -------
+            a list with the b1-b5 no convergence count
+        '''
         folder = os.path.join(self.path, f'a{alpha}_results')
         
         file = os.path.join(folder, f'results_a{alpha}.csv')
@@ -122,6 +143,14 @@ class convergence_counter():
         return count
     
     def write_count(self, alpha_list):
+        '''
+        Writes the count csv file
+
+        Parameter
+        ---------
+        alpha_list (`list` or `tuple` of `float`)
+            alpha values to write in file
+        '''
         dict = {
             'alpha' : [],
             'b1' : [],

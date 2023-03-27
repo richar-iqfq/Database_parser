@@ -200,6 +200,10 @@ class statistic_analyser():
         tolerance (`dict`):
             Dictionary with the tolerance values. Keys->'Ne_calc','Energy_S','Energy_Savrg','Recover'
             Default is None
+
+        isdata (`bool`):
+            if True, will search the .npy array for the values inside root/results/optimization/
+            a{alpha}_results/saved_data
         '''
         b_amount=5
         Ecorr_real = self.database_df['CIe']

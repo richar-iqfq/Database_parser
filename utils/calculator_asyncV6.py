@@ -83,7 +83,7 @@ class main_calculator():
     '''
     Calculates both, the optimized b and the Ecorr recovering
 
-    Parameters
+    Attributes
     ----------
     output_path (`str`):
         Output path to storage results, for `run_optimization`: root/results/optimization/output_path, 

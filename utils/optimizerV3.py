@@ -7,8 +7,8 @@ Optimizer script, calculate the optimization for the parameters given to the cla
 
 class b_optimizer():
     '''
-    Parameters:
-    -----------------------------------------
+    Attributes
+    ----------
     orbital_energies (`list` or `array`):
         Vector with all the orbital energies
 

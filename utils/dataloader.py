@@ -5,7 +5,7 @@ class dataloader():
     '''
     Dataloader for compute calculations
 
-    Parameters
+    Attributes
     ----------
     database (`str`):
         Csv database with all data
@@ -19,10 +19,10 @@ class dataloader():
         Load the data inside the database and energies and returns a dictionary with
         the info. 
 
-        raw (`boo`):
+        raw (`bool`):
             True if database do not have optimized values
 
-        amount ('All') or (`int`):
+        amount ('All' or `int`):
             Number of molecules to return in dict, default is 'All'
     '''
     def __init__(self, database, energies):
