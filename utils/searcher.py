@@ -49,7 +49,7 @@ class main_log_reader():
         REb_homo = r'Beta\s+occ.'
         REb_lumo = r'Beta\s+virt.'
 
-        RE_values = re.compile(r'\s+([+-]?[0-9.]+)')
+        RE_values = re.compile(r'\s+([+-]?\d+.\d*)')
         
         is_betha = False
 
@@ -127,31 +127,79 @@ class main_log_reader():
             orbital_lumo = orbital_energies['a_lumo'] + orbital_energies['b_lumo']
             orbital_lumo = [float(val) for val in orbital_lumo]
             orbital_lumo = sorted(orbital_lumo)
+            
+            try:
+                E_homo4 = orbital_homo[-5]
+            except:
+                E_homo4 = 0
+            
+            try:
+                E_homo3 = orbital_homo[-4]
+            except:
+                E_homo3 = 0
 
-            E_homo4 = orbital_homo[-5]
-            E_homo3 = orbital_homo[-4]
-            E_homo2 = orbital_homo[-3]
+            try:
+                E_homo2 = orbital_homo[-3]
+            except:
+                E_homo2 = 0
+            
             E_homo1 = orbital_homo[-2]
             E_homo = orbital_homo[-1]
             E_lumo = orbital_lumo[0]
             E_lumo1 = orbital_lumo[1]
-            E_lumo2 = orbital_lumo[2]
-            E_lumo3 = orbital_lumo[3]
-            E_lumo4 = orbital_lumo[4]
+
+            try:
+                E_lumo2 = orbital_lumo[2]
+            except:
+                E_lumo2 = 0
+
+            try:
+                E_lumo3 = orbital_lumo[3]
+            except:
+                E_lumo3 = 0
+            
+            try:
+                E_lumo4 = orbital_lumo[4]
+            except:
+                E_lumo4 = 0
 
         else:
             # Assign the homo and lumo value
-            E_homo4 = orbital_energies['a_homo'][-5]
-            E_homo3 = orbital_energies['a_homo'][-4]
-            E_homo2 = orbital_energies['a_homo'][-3]
+            try:
+                E_homo4 = orbital_energies['a_homo'][-5]
+            except:
+                E_homo4 = 0
+
+            try:
+                E_homo3 = orbital_energies['a_homo'][-4]
+            except:
+                E_homo3 = 0
+            
+            try:
+                E_homo2 = orbital_energies['a_homo'][-3]
+            except:
+                E_homo2 = 0
+            
             E_homo1 = orbital_energies['a_homo'][-2]
             E_homo = orbital_energies['a_homo'][-1]
             E_lumo = orbital_energies['a_lumo'][0]
             E_lumo1 = orbital_energies['a_lumo'][1]
-            E_lumo2 = orbital_energies['a_lumo'][2]
-            E_lumo3 = orbital_energies['a_lumo'][3]
-            E_lumo4 = orbital_energies['a_lumo'][4]
-
+            
+            try:
+                E_lumo2 = orbital_energies['a_lumo'][2]
+            except:
+                E_lumo2 = 0
+            
+            try:
+                E_lumo3 = orbital_energies['a_lumo'][3]
+            except:
+                E_lumo3 = 0
+            
+            try:
+                E_lumo4 = orbital_energies['a_lumo'][4]
+            except:
+                E_lumo4 = 0
+        
         return (E_homo4, E_homo3, E_homo2, E_homo1, E_homo, E_lumo, E_lumo1, E_lumo2, E_lumo3, E_lumo4, energies, factor)
     
     def __Equals2(self, keyword):
@@ -235,7 +283,7 @@ class main_log_reader():
 
         for file in HF:
             self.__Internal_file_selected = file
-            #print(file)
+            # print(file)
 
             # Identifiers
             index = file.rfind('/') + 1
@@ -281,8 +329,10 @@ class main_log_reader():
 
             # EV
             EV = self.__Equals2('EV')
-            self.values['EV'].append(float(EV)/float(Ne))
-
+            if EV != None:
+                self.values['EV'].append(float(EV)/float(Ne))
+            else:
+                self.values['EV'].append('NaN')
             # EJ
             EJ = self.__Equals2('EJ')
             self.values['EJ'].append(float(EJ)/float(Ne))

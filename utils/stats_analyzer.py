@@ -171,7 +171,7 @@ class statistic_analyser():
         fig.suptitle('Correlation Matrix', fontweight ="bold")
         fig.set_size_inches(9, 9)
 
-        sns.heatmap(corr_m, linewidths=0.5, mask=(np.abs(corr_m) <= 0.3), annot=True, annot_kws={"size":6}, square=True, ax=ax)
+        sns.heatmap(corr_m, linewidths=0.5, mask=(np.abs(corr_m) <= 0.3), annot=True, annot_kws={"size":5}, square=True, ax=ax)
         
         if show:
             plt.show()
