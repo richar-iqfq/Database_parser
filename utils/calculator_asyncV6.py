@@ -83,7 +83,7 @@ class main_calculator():
     '''
     Calculates both, the optimized b and the Ecorr recovering
 
-    Attributes
+    Parameters
     ----------
     output_path (`str`):
         Output path to storage results, for `run_optimization`: root/results/optimization/output_path, 
@@ -186,6 +186,7 @@ class main_calculator():
         }
 
         optimizer = {}
+        flag = False
 
         loader = dataloader(database, energies)
         dataset = loader.load(raw=True)
@@ -223,9 +224,14 @@ class main_calculator():
             pool.join()
             pbar.close()
 
+            if not flag:
+                for i in range(len(optim_values)):
+                    optimized_values['Theta'].append(optim_values[i][0])
+                    optimized_values['Mu'].append(optim_values[i][1])
+
+                flag = True
+
             for i in range(len(optim_values)):
-                optimized_values['Theta'].append(optim_values[i][0])
-                optimized_values['Mu'].append(optim_values[i][1])
                 optimized_values['B_opt1'].append(optim_values[i][2])
                 optimized_values['Err1'].append(optim_values[i][3])
 
@@ -249,6 +255,13 @@ class main_calculator():
             pool.join()
             pbar.close()
 
+            if not flag:
+                for i in range(len(optim_values)):
+                    optimized_values['Theta'].append(optim_values[i][0])
+                    optimized_values['Mu'].append(optim_values[i][1])
+
+                flag = True
+            
             for i in range(len(optim_values)):
                 optimized_values['B_opt2'].append(optim_values[i][2])
                 optimized_values['Err2'].append(optim_values[i][3])
@@ -271,6 +284,13 @@ class main_calculator():
             pool.close()
             pool.join()
             pbar.close()
+
+            if not flag:
+                for i in range(len(optim_values)):
+                    optimized_values['Theta'].append(optim_values[i][0])
+                    optimized_values['Mu'].append(optim_values[i][1])
+
+                flag = True
 
             for i in range(len(optim_values)):
                 optimized_values['B_opt3'].append(optim_values[i][2])
@@ -295,6 +315,13 @@ class main_calculator():
             pool.join()
             pbar.close()
 
+            if not flag:
+                for i in range(len(optim_values)):
+                    optimized_values['Theta'].append(optim_values[i][0])
+                    optimized_values['Mu'].append(optim_values[i][1])
+
+                flag = True
+
             for i in range(len(optim_values)):
                 optimized_values['B_opt4'].append(optim_values[i][2])
                 optimized_values['Err4'].append(optim_values[i][3])
@@ -317,6 +344,13 @@ class main_calculator():
             pool.close()
             pool.join()
             pbar.close()
+
+            if not flag:
+                for i in range(len(optim_values)):
+                    optimized_values['Theta'].append(optim_values[i][0])
+                    optimized_values['Mu'].append(optim_values[i][1])
+
+                flag = True
 
             for i in range(len(optim_values)):
                 optimized_values['B_opt5'].append(optim_values[i][2])

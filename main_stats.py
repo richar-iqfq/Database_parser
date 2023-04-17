@@ -18,4 +18,4 @@ if __name__=='__main__':
     sa = statistic_analyser(database, energies, output_path, alpha=-0.5, percent=percent)
     sa.plot_dispersion(save=True, show=False)
     sa.plot_correlation_matrix(save=True, show=False)
-    sa.plot_Err(cores='All', save=True, show=False, tolerance=tolerance)
+    #sa.plot_Err(cores='All', save=True, show=False, tolerance=tolerance)

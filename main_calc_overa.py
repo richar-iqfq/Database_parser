@@ -12,7 +12,9 @@ as well as the statistical analysis for the percent values.
 if __name__=='__main__':
     cores = 14
     calc_types=(1, 2, 3, 4, 5)
-    alpha_list = (-0.3, -0.34, -0.38, -0.42, -0.46)
+    alpha_list = (-0.06, -0.08, -0.1, -0.12, -0.14, -0.16, -0.18,
+                  -0.2, -0.22, -0.24, -0.26, -0.28, -0.3, -0.34,
+                  -0.38, -0.42, -0.46)
     
     percent = (0.9, 0.95, 0.96, 0.97, 1, 1.03, 1.04, 1.05, 1.1)
 
@@ -44,6 +46,6 @@ if __name__=='__main__':
         st = statistic_analyser(out_file, energies, output_path, alpha=alpha, percent=percent)
         st.plot_dispersion(save=True, show=False)
         st.plot_correlation_matrix(save=True, show=False)
-        st.plot_Err(cores=cores, save=True, show=False, tolerance=tolerance)
+        #st.plot_Err(cores=cores, save=True, show=False, tolerance=tolerance)
 
         count += 1
