@@ -10,7 +10,7 @@ class convergence_writter():
     '''
     Search if there are come molecules with no convergence
 
-    Attributes
+    Parameters
     ----------
     database (`str`):
         database path with the required info (Err1, Err2, etc)
@@ -43,7 +43,7 @@ class convergence_analyzer():
     '''
     Check database results to find errors in convergence
 
-    Attributes
+    Parameters
     ----------
     re_path (`str`):
         Re type path to search recurrence. Example >> r'a-[0-9.]+_results'
@@ -113,9 +113,10 @@ class convergence_counter():
     write_count(alpha_list):
         save a csv file with the count for all the alpha folders given
     '''
-    def __init__(self):
+    def __init__(self, specific=None):
         root = os.getcwd()
         self.path = os.path.join(root, 'results', 'optimization')
+        self.specific = specific
 
     def get_count(self, alpha):
         '''
@@ -137,8 +138,12 @@ class convergence_counter():
         
         count = []
 
-        for type in range(1, 6):
-            count.append(len(df[df[f'Err{type}']>=1E-3]))
+        if self.specific:
+            count.append(len(df[df[f'Err{self.specific}']>=1E-3]))
+        
+        else:
+            for type in range(1, 6):
+                count.append(len(df[df[f'Err{type}']>=1E-3]))
 
         return count
     
