@@ -1,5 +1,5 @@
 from utils.calculator_asyncV6 import main_calculator
-# from utils.convergence import convergence_checker
+from utils.convergence import convergence_checker
 import os
 
 '''
@@ -35,6 +35,6 @@ if __name__=='__main__':
         calculator = main_calculator(output_path, calc_types=calc_types[alpha], cores=cores, tolerance=tolerance)
         calculator.run_optimization(database, energies, alpha)
 
-        # out_file = os.path.join('results', 'optimization', output_path, f'results_a{alpha}.csv')
-        # c_checker = convergence_checker(out_file)
-        # c_checker.run_check()
+        out_file = os.path.join('results', 'optimization', output_path, f'results_a{alpha}.csv')
+        c_checker = convergence_checker(out_file)
+        c_checker.run_check()

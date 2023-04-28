@@ -1,2 +1,10 @@
 #Ignora la carpeta __pycache__
 __pycache__/
+
+SET*
+results/
+Statistic_Plots/
+move_temp.py
+recover_study.py
+S_study.py
+check.py
