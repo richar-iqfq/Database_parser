@@ -61,6 +61,23 @@ def raw_data_unify(container, output_keywords):
 
     main_df.to_feather(f'./Database_Energies_{output_keywords}.feather')
 
+    # For SMILES
+    main_name = os.path.join(SETS[0], container, 'smiles.csv')
+    main_df = pd.read_csv(main_name)
+
+    path = os.path.join(container, 'smiles.csv')
+
+    for set in SETS[1::]:
+        print(main_df.shape, end='\r')
+        
+        df = pd.read_csv(os.path.join(set, path))
+        main_df = pd.concat([main_df, df], ignore_index=True)
+
+    main_df = main_df.sort_values(by=['ID'], ignore_index=True)
+
+    smiles_name = f'./Database_SMILES_{output_keywords}'
+    main_df.to_csv(smiles_name+'.csv', index=False)
+
     return file_name
 
 def raw_data_cleaner(input_file, overwrite=False):
