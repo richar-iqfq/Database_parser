@@ -13,4 +13,4 @@ if __name__=='__main__':
     output_keywords = 'AA'
 
     mb = extractor(output_path)
-    mb.extract(unify=True, output_keywords=output_keywords)
+    mb.extract(unify=True, output_keywords=output_keywords, charge=0)

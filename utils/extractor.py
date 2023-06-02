@@ -45,7 +45,7 @@ class extractor():
             for fail in failed:
                 txt.write(f'{fail}.txt')
 
-    def extract(self, unify=True, output_keywords='AA'):
+    def extract(self, unify=True, output_keywords='AA', charge=0):
         '''
         Extract the data from the HF and CI files
 
@@ -67,7 +67,7 @@ class extractor():
                 searcher.Save()
 
             HF_path = [os.path.join(folder_path, HF_path) for HF_path in os.listdir(folder_path) if 'HF' in HF_path]
-            builder = Mol_builder(os.path.join(folder_path, self.output_path))
+            builder = Mol_builder(os.path.join(folder_path, self.output_path), charge=charge)
 
             log_files = [file for file in os.listdir(HF_path[0]) if '.log' in file]
 

@@ -10,9 +10,10 @@ class Mol_builder():
 	Parameters
 	----------
 	'''
-	def __init__(self, output_path):
+	def __init__(self, output_path, charge=0):
 		self.output_xyz = os.path.join(output_path, 'xyz_molecules')
 		self.output_img = os.path.join(output_path, 'img_molecules')
+		self.charge = charge
 
 		if not os.path.isdir(self.output_xyz):
 			os.makedirs(self.output_xyz)
@@ -128,10 +129,10 @@ class Mol_builder():
 	def __get_mol(self, xyz_file):
 		mol = Chem.MolFromXYZFile(xyz_file)
 		conn_mol = Chem.Mol(mol)
-		rdDetermineBonds.DetermineConnectivity(conn_mol)
+		rdDetermineBonds.DetermineConnectivity(conn_mol, useHueckel=True, charge=self.charge)
 
 		try:
-			rdDetermineBonds.DetermineBonds(conn_mol)
+			rdDetermineBonds.DetermineBonds(conn_mol, useHueckel=True, charge=self.charge)
 		except:
 			pass
 

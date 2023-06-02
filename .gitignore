@@ -8,3 +8,7 @@ move_temp.py
 recover_study.py
 S_study.py
 check.py
+*.csv
+*.feather
+nul
+run.out

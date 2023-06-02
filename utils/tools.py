@@ -123,3 +123,22 @@ def raw_data_cleaner(input_file, overwrite=False):
     criterium_database = pd.DataFrame().assign(ID=cleaned_database['ID'], NAtoms=cleaned_database['NAtoms'], Ne=cleaned_database['Ne'], HF=cleaned_database['HF'])
 
     criterium_database.to_csv('criteria.csv', index=False)
+
+def rename_cols(file_name, words):
+    df = pd.read_csv(file_name)
+
+    names = df['ID']
+    names += words
+
+    df['ID'] = names
+
+    df.to_csv(words + file_name, index=False)
+
+    print('File successfully edited')
+
+def concat_df(files, output_file):
+    df = pd.concat(files, ignore_index=True)
+
+    df.to_csv(output_file, index=False)
+
+    print(f'{output_file} writed successfully')
