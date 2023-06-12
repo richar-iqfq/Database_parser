@@ -149,7 +149,8 @@ class Mol_builder():
 		return smiles
 
 	def get_image(self, xyz_file, show=False, save=True):
-		conn_mol = self.__get_mol(xyz_file)
+		smiles = self.get_smiles(xyz_file)
+		conn_mol = Chem.MolFromSmiles(smiles)
 		
 		if not conn_mol:
 			return None

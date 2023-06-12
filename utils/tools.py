@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import re
 
 def raw_data_unify(container, output_keywords):
     '''
@@ -142,3 +143,28 @@ def concat_df(files, output_file):
     df.to_csv(output_file, index=False)
 
     print(f'{output_file} writed successfully')
+
+def search_chlorides():
+    root = os.getcwd()
+    sets = [folder for folder in os.listdir(root) if 'set' in folder.lower()]
+
+
+    folders = sorted(sets)
+    chlorides_list = []
+
+    for folder in folders:
+        xyz_files = os.path.join(folder, 'extracted_data', 'xyz_molecules')
+
+        for xyz in os.listdir(xyz_files):
+            file = os.path.join(xyz_files, xyz)
+
+            with open(file, 'r') as txt:
+                lines = txt.readlines()
+                
+                for line in lines:
+                    if re.search('Cl\t', line):
+                        chlorides_list.append(xyz)
+                        break
+
+    df = pd.DataFrame({'Chlorides' : chlorides_list})
+    df.to_csv('Database_Chlorides_AA.csv', index=False)
