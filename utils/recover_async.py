@@ -69,11 +69,11 @@ class calculator():
                     'CIe' : values_dataset['CIe'][i],
                     'Factor': values_dataset['Factor'][i],
                     'Energies' : [energie for energie in energies_dataset[ID].dropna()],
-                    'y_pred' : values_dataset['y_pred'][i]
+                    'b_pred' : values_dataset['b_pred'][i]
                 }
 
         for ID in IDS:
-            b_test[ID] = dataset[ID]['y_pred']
+            b_test[ID] = dataset[ID]['b_pred']
             orbital_energies = dataset[ID]['Energies']
             Ne = dataset[ID]['Ne']
             CIe = dataset[ID]['CIe']
