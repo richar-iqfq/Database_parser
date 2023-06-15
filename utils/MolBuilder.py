@@ -3,7 +3,7 @@ import re
 from rdkit import Chem
 from rdkit.Chem import Draw, rdDetermineBonds
 
-class Mol_builder():
+class MolBuilder():
 	'''
 	Class to parse the molecule information from .log file and converted to xyz, smile and 2D files.
 

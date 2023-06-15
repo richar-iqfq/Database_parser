@@ -1,11 +1,11 @@
-from utils.searcher import main_log_reader
-from utils.tools import raw_data_cleaner, raw_data_unify
-from utils.mol_builder import Mol_builder
+from utils.Searcher import MainLogReader
+from utils.Tools import raw_data_cleaner, raw_data_unify
+from utils.MolBuilder import MolBuilder
 import os
 import re
 import pandas as pd
 
-class extractor():
+class Extractor():
     '''
     Extract the data from the HF and CI files into csv contained inside output_path
 
@@ -62,12 +62,12 @@ class extractor():
         for folder in self.folders:
             folder_path = os.path.join(self.root, folder)
             if not os.path.isfile(os.path.join(folder_path, self.output_path, 'data.csv')):
-                searcher = main_log_reader(folder, self.output_path)
+                searcher = MainLogReader(folder, self.output_path)
                 searcher.search()
                 searcher.Save()
 
             HF_path = [os.path.join(folder_path, HF_path) for HF_path in os.listdir(folder_path) if 'HF' in HF_path]
-            builder = Mol_builder(os.path.join(folder_path, self.output_path), charge=charge)
+            builder = MolBuilder(os.path.join(folder_path, self.output_path), charge=charge)
 
             log_files = [file for file in os.listdir(HF_path[0]) if '.log' in file]
 

@@ -2,7 +2,7 @@ import re
 import shutil
 import os
 
-class check_Normal_T():
+class CheckNormalT():
     '''
     Check if every file in HF and CI folders is complete
 

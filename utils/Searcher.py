@@ -6,7 +6,7 @@ import pandas as pd
 Extract the information from the log files in the input_path given to the class
 '''
 
-class main_log_reader():
+class MainLogReader():
     '''
     Attributes
     ----------

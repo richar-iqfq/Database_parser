@@ -3,11 +3,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from utils.calculator_asyncV6 import main_calculator
+from utils.CalculatorAsyncV6 import MainCalculator
 from sklearn.metrics import mean_absolute_error
-from utils.convergence import convergence_counter
+from utils.Convergence import Counter
 
-class statistic_analyser():
+class StatisticAnalyser():
     '''
     Statistic analyzer for correlation energy recovering
 
@@ -78,7 +78,7 @@ class statistic_analyser():
         self.alpha = alpha
         self.percent = percent
 
-        counter = convergence_counter()
+        counter = Counter()
         self.count = counter.get_count(alpha)
         
         root = os.getcwd()
@@ -233,7 +233,7 @@ class statistic_analyser():
                     Recover_results[f'Mu_{i+1}'] = array_data[:,2]
 
             else:
-                mc = main_calculator(self.output_path, cores=cores, tolerance=tolerance)
+                mc = MainCalculator(self.output_path, cores=cores, tolerance=tolerance)
                 Recover_results = mc.run_recovering(self.database, self.energies, perc, self.alpha)
 
             for i in range(b_amount):

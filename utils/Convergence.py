@@ -6,7 +6,7 @@ import re
 Script for checking the convergence of each molecule calculated
 '''
 
-class convergence_writter():
+class Writter():
     '''
     Search if there are come molecules with no convergence
 
@@ -39,7 +39,7 @@ class convergence_writter():
             if len(not_convergence) > 0:
                 not_convergence.to_csv(file_name, index=False)
 
-class convergence_analyzer():
+class Analyzer():
     '''
     Check database results to find errors in convergence
 
@@ -101,7 +101,7 @@ class convergence_analyzer():
         
         return results
     
-class convergence_counter():
+class Counter():
     '''
     Count the number of molecules with no-convergence in alpha database
     

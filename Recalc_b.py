@@ -1,5 +1,5 @@
-from utils.convergence import convergence_analyzer
-from utils.calculator_asyncV6 import main_calculator
+from utils.Convergence import Analyzer
+from utils.CalculatorAsyncV6 import MainCalculator
 
 if __name__=='__main__':
     database = 'Database_AA.csv'
@@ -14,7 +14,7 @@ if __name__=='__main__':
 
     re_path = r'a-[0-9.]+_results'
 
-    analyzer = convergence_analyzer(re_path)
+    analyzer = Analyzer(re_path)
     values = analyzer.analyze()
 
     for new_try in values:
@@ -25,5 +25,5 @@ if __name__=='__main__':
             'b0' : b_mean
         }
 
-        mb = main_calculator(output_path, calc_types=(type, 0, 0, 0, 0), cores=14, tolerance=tolerance, options=options)
+        mb = MainCalculator(output_path, calc_types=(type, 0, 0, 0, 0), cores=14, tolerance=tolerance, options=options)
         mb.run_optimization(database, energies, alpha)

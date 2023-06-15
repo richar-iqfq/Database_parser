@@ -1,6 +1,6 @@
-from utils.calculator_asyncV6 import main_calculator
+from utils.CalculatorAsyncV6 import MainCalculator
 # from utils.convergence import convergence_writter
-from utils.stats_analyzer import statistic_analyser
+from utils.StatisticAnalyser import StatisticAnalyser
 import os
 
 '''
@@ -33,7 +33,7 @@ if __name__=='__main__':
         print(f'Running: {count}/{total_calcs}\n')
         output_path = f'a{alpha}_results'
 
-        # calculator = main_calculator(output_path, calc_types=calc_types, cores=cores, tolerance=tolerance)
+        # calculator = MainCalculator(output_path, calc_types=calc_types, cores=cores, tolerance=tolerance)
         # calculator.run_optimization(database, energies, alpha)
 
         out_file = os.path.join('results', 'optimization', output_path, f'results_a{alpha}.csv')
@@ -41,7 +41,7 @@ if __name__=='__main__':
         # c_checker = convergence_writter(out_file)
         # c_checker.run_write()
 
-        st = statistic_analyser(out_file, energies, output_path, alpha=alpha, percent=percent, specific=4)
+        st = StatisticAnalyser(out_file, energies, output_path, alpha=alpha, percent=percent, specific=4)
         st.plot_dispersion(save=True, show=False)
         st.plot_correlation_matrix(save=True, show=False, diag=False)
         #st.plot_Err(cores=cores, save=True, show=False, tolerance=tolerance)

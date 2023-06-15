@@ -1,4 +1,4 @@
-from utils.recover_async import calculator
+from utils.RecoverAsync import Calculator
 
 calc_type = 4
 alpha = -0.27
@@ -13,5 +13,5 @@ tolerance = {
     'Recover' : 1E-7
 }
 
-mb = calculator('predictions', calc_type, cores=5, tolerance=tolerance)
+mb = Calculator('predictions', calc_type, cores=5, tolerance=tolerance)
 mb.run(database, energies, alpha)

@@ -1,5 +1,5 @@
-from utils.dataloader import dataloader
-from utils.optimizerV3 import b_optimizer
+from utils.Dataloader import Dataloader
+from utils.OptimizerV3 import b_optimizer
 import os
 import pandas as pd
 import numpy as np
@@ -79,7 +79,7 @@ def conv5(index):
     Ecorr_p, theta_p, mu_p, _ = optimizer[ID].Recover_Ecorr(b5_test[ID], 5)
     return index, (Ecorr_p, theta_p, mu_p)
 
-class main_calculator():
+class MainCalculator():
     '''
     Calculates both, the optimized b and the Ecorr recovering
 
@@ -188,7 +188,7 @@ class main_calculator():
         optimizer = {}
         flag = False
 
-        loader = dataloader(database, energies)
+        loader = Dataloader(database, energies)
         dataset = loader.load(raw=True)
         IDS = loader.get_IDS()
 
@@ -414,7 +414,7 @@ class main_calculator():
         b5_test = {}
         final_values = {}
 
-        loader = dataloader(database, energies)
+        loader = Dataloader(database, energies)
         dataset = loader.load(raw=False)
         IDS = loader.get_IDS()
 

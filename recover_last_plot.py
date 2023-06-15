@@ -1,4 +1,4 @@
-from utils.stats_analyzer import statistic_analyser
+from utils.StatisticAnalyser import StatisticAnalyser
 import os
 
 if __name__=='__main__':
@@ -21,5 +21,5 @@ if __name__=='__main__':
     output_path = f'a{alpha}_results'
     out_file = os.path.join('results', 'optimization', output_path, f'results_a{alpha}.csv')
 
-    st = statistic_analyser(out_file, energies, output_path, alpha=alpha, percent=percent)
+    st = StatisticAnalyser(out_file, energies, output_path, alpha=alpha, percent=percent)
     st.plot_Err(cores=cores, save=True, show=False, tolerance=tolerance, isdata=True)

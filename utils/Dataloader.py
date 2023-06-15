@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-class dataloader():
+class Dataloader():
     '''
     Dataloader for compute calculations
 

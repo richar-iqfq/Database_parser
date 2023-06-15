@@ -1,4 +1,4 @@
-from utils.stats_analyzer import statistic_analyser
+from utils.StatisticAnalyser import StatisticAnalyser
 import os
 
 if __name__=='__main__':
@@ -15,7 +15,7 @@ if __name__=='__main__':
     database = 'Database_AA.csv'
     energies = 'Database_Energies_AA.feather'
 
-    sa = statistic_analyser(database, energies, output_path, alpha=-0.5, percent=percent)
+    sa = StatisticAnalyser(database, energies, output_path, alpha=-0.5, percent=percent)
     sa.plot_dispersion(save=True, show=False)
     sa.plot_correlation_matrix(save=True, show=False)
     #sa.plot_Err(cores='All', save=True, show=False, tolerance=tolerance)

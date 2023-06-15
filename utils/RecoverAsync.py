@@ -1,4 +1,4 @@
-from utils.optimizerV3 import b_optimizer
+from utils.OptimizerV3 import b_optimizer
 import os
 import pandas as pd
 import numpy as np
@@ -35,7 +35,7 @@ def conv5(index):
     Ecorr_p, theta_p, mu_p, _ = optimizer[ID].Recover_Ecorr(b_test[ID], 5)
     return index, (Ecorr_p, theta_p, mu_p)
 
-class calculator():
+class Calculator():
     def __init__(self, output_path, calc_type=1, cores='All', tolerance=None):
         self.output_path = output_path
         self.calc_type = calc_type
