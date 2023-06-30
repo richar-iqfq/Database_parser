@@ -28,17 +28,16 @@ class MainLogReader():
     def __init__(self, input_path, output_path):
         self.input_path = input_path
         self.output_path = output_path
-        self.__Internal_file_selected = None
         self.energies = {}
         self.values = {}
         self.Properties = ['ID', 'NAtoms', 'Ne', 'Homo-4', 'Homo-3',
                             'Homo-2', 'Homo-1', 'Homo', 'Lumo', 
                             'Lumo+1', 'Lumo+2', 'Lumo+3', 'Lumo+4',
                             'CIe', 'HF', 'ET', 'EV', 'EJ', 'EK', 
-                            'ENuc', 'Dipole', 'Factor']
+                            'ENuc', 'Dipole', 'Factor', 'X', 'Y',
+                            'Z', 'XX', 'YY', 'ZZ', 'XY', 'XZ', 'YZ']
         
-    def __orbitals(self):
-        file = self.__Internal_file_selected
+    def __orbitals(self, file_content):
         orbital_energies = {'a_homo' : [],
                              'a_lumo' : [],
                              'b_homo' : [], 
@@ -59,43 +58,41 @@ class MainLogReader():
         Eb_lines_homo = []
         Eb_lines_lumo = []
 
-        with open(file, 'r') as log:
-            for line in log:
-                if re.search(REb_homo, line):
-                    is_betha = True
-                    break
-        
+        for line in file_content:
+            if re.search(REb_homo, line):
+                is_betha = True
+                break
+    
         if is_betha:
             factor = 1
         else:
             factor = 2
 
-        with open(file, 'r') as log:
-            if is_betha:
-                for line in log:
-                    matcha_homo = re.search(REa_homo, line)
-                    matcha_lumo = re.search(REa_lumo, line)
-                    
-                    matchb_homo = re.search(REb_homo, line)
-                    matchb_lumo = re.search(REb_lumo, line)
+        if is_betha:
+            for line in file_content:
+                matcha_homo = re.search(REa_homo, line)
+                matcha_lumo = re.search(REa_lumo, line)
+                
+                matchb_homo = re.search(REb_homo, line)
+                matchb_lumo = re.search(REb_lumo, line)
 
-                    if matcha_homo != None:
-                        Ea_lines_homo.append(line)
-                    if matcha_lumo != None:
-                        Ea_lines_lumo.append(line)
-                    
-                    if matchb_homo != None:
-                        Eb_lines_homo.append(line)
-                    if matchb_lumo != None:
-                        Eb_lines_lumo.append(line)
-            else:
-                for line in log:
-                    matcha_homo = re.search(REa_homo, line)
-                    matcha_lumo = re.search(REa_lumo, line)
-                    if matcha_homo != None:
-                        Ea_lines_homo.append(line)
-                    if matcha_lumo != None:
-                        Ea_lines_lumo.append(line)
+                if matcha_homo != None:
+                    Ea_lines_homo.append(line)
+                if matcha_lumo != None:
+                    Ea_lines_lumo.append(line)
+                
+                if matchb_homo != None:
+                    Eb_lines_homo.append(line)
+                if matchb_lumo != None:
+                    Eb_lines_lumo.append(line)
+        else:
+            for line in file_content:
+                matcha_homo = re.search(REa_homo, line)
+                matcha_lumo = re.search(REa_lumo, line)
+                if matcha_homo != None:
+                    Ea_lines_homo.append(line)
+                if matcha_lumo != None:
+                    Ea_lines_lumo.append(line)
         
         # Extract all the orbital energies
         energies = []
@@ -202,61 +199,75 @@ class MainLogReader():
         
         return (E_homo4, E_homo3, E_homo2, E_homo1, E_homo, E_lumo, E_lumo1, E_lumo2, E_lumo3, E_lumo4, energies, factor)
     
-    def __Equals2(self, keyword):
-        file = self.__Internal_file_selected
+    def __Equals2(self, keyword, file_content):
 
         RE_equalsto = r'\s+{}=\s*([+-]?[0-9.]+)'.format(keyword)
         
         if keyword == 'DE\(Corr\)':
             matches = []
-            with open(file, 'r') as log:
-                for line in log:
-                    match = re.search(RE_equalsto, line)
-                    if match != None:
-                        matches.append(line)
+            for line in file_content:
+                match = re.search(RE_equalsto, line)
+                if match != None:
+                    matches.append(line)
             value = re.search(RE_equalsto, matches[-1])
             return value.group(1)
         else:
-            with open(file, 'r') as log:
-                for line in log:
-                    value = re.search(RE_equalsto, line)
-                    if value != None:
-                        return value.group(1)
+            for line in file_content:
+                value = re.search(RE_equalsto, line)
+                if value != None:
+                    return value.group(1)
 
-    def __electron_number(self):
-        file = self.__Internal_file_selected
-
+    def __electron_number(self, file_content):
         RE_ae = r'\s+(\d+)\s+alpha\s+electrons'
         RE_be = r'\s+(\d+)\s+beta\s+electrons'
 
-        with open(file, 'r') as log:
-            for line in log:
-                matcha = re.search(RE_ae, line)
-                matchb = re.search(RE_be, line)
+        for line in file_content:
+            matcha = re.search(RE_ae, line)
+            matchb = re.search(RE_be, line)
 
-                if matcha != None:
-                    ae = matcha.group(1)
-                if matchb != None:
-                    be = matchb.group(1)
+            if matcha != None:
+                ae = matcha.group(1)
+            if matchb != None:
+                be = matchb.group(1)
 
         return int(ae) + int(be)
+    
+    def __coordinates(self, file_content):
+        re_dipole = r'^\s+Dipole\s+moment' # Dipole initial line
+        re_quadrupole = r'^\s+Quadrupole\s+moment' # Quadrupole initial line
+        re_traceless = r'^\s+Traceless\s+Quadrupole' # Quadrupole final line
+        re_value = r'\s+([XYZ]{1,2})=\s+([-+]?\d+.\d*)' # Values and names
+
+        # Get the lines index
+        for i, line in enumerate(file_content):
+            if re.findall(re_dipole, line):
+                dip_index = i
+
+            if re.findall(re_quadrupole, line):
+                quad_index = i
+
+            if re.findall(re_traceless, line):
+                trace_index = i
+
+        dipole_values = file_content[dip_index+1:quad_index]
+        quadrupole_values = file_content[quad_index+1:trace_index]
+
+        quadrupole = []
+
+        for found in dipole_values:
+            dipole = re.findall(re_value, found)
+
+        for found in quadrupole_values:
+            res = re.findall(re_value, found)
+            quadrupole += res
+
+        return dipole, quadrupole
 
     def __build_structure(self):
         for key in self.Properties:
             self.values[key] = []
 
-    def search(self, get=False):
-        '''
-        Compute data extraction for the molecules inside the input_path folder,
-        if get is True, returns all the found values.
-
-        Parameters
-        ----------
-        get (`bool`)
-            if get return self.values, default is False
-        '''
-        self.__build_structure()
-
+    def __get_files(self):
         main_path = os.path.join(os.getcwd(), self.input_path)
         CIt = [] # Provisional path
         HFt = [] # Provisional path
@@ -281,10 +292,27 @@ class MainLogReader():
                     CI.append(fileCI)
                     HF.append(fileHF)
 
-        for file in HF:
-            self.__Internal_file_selected = file
-            # print(file)
+        return HF, CI
+            
+    def search(self, get=False):
+        '''
+        Compute data extraction for the molecules inside the input_path folder,
+        if get is True, returns all the found values.
 
+        Parameters
+        ----------
+        get (`bool`)
+            if get return self.values, default is False
+        '''
+        self.__build_structure()
+
+        HF, CI = self.__get_files()
+
+        for file in HF:
+
+            with open(file, 'r') as log_file:
+                file_content = log_file.readlines()
+            
             # Identifiers
             index = file.rfind('/') + 1
             t_file = file[index::]
@@ -292,15 +320,15 @@ class MainLogReader():
             self.values['ID'].append(ID)
 
             # NAtoms
-            NAtoms = self.__Equals2('NAtoms')
+            NAtoms = self.__Equals2('NAtoms', file_content)
             self.values['NAtoms'].append(NAtoms)
 
             # Ne
-            Ne = self.__electron_number()
+            Ne = self.__electron_number(file_content)
             self.values['Ne'].append(Ne)
 
             # Homo, Lumo, orbital_energies
-            (Homo4, Homo3, Homo2, Homo1, Homo, Lumo, Lumo1, Lumo2, Lumo3, Lumo4, energies, factor) = self.__orbitals()
+            (Homo4, Homo3, Homo2, Homo1, Homo, Lumo, Lumo1, Lumo2, Lumo3, Lumo4, energies, factor) = self.__orbitals(file_content)
             self.values['Homo-4'].append(Homo4)
             self.values['Homo-3'].append(Homo3)
             self.values['Homo-2'].append(Homo2)
@@ -316,42 +344,53 @@ class MainLogReader():
             self.energies[ID] = pd.Series(energies)
 
             # HF
-            HFe = self.__Equals2('ETot')
+            HFe = self.__Equals2('ETot', file_content)
             if HFe == None:
-                HFe = self.__Equals2('HF')
+                HFe = self.__Equals2('HF', file_content)
                 self.values['HF'].append(HFe)
             else:
                 self.values['HF'].append(HFe)
 
             # ET
-            ET = self.__Equals2('ET')
+            ET = self.__Equals2('ET', file_content)
             self.values['ET'].append(float(ET)/float(Ne))
 
             # EV
-            EV = self.__Equals2('EV')
+            EV = self.__Equals2('EV', file_content)
             if EV != None:
                 self.values['EV'].append(float(EV)/float(Ne))
             else:
                 self.values['EV'].append('NaN')
             # EJ
-            EJ = self.__Equals2('EJ')
+            EJ = self.__Equals2('EJ', file_content)
             self.values['EJ'].append(float(EJ)/float(Ne))
 
             # EK
-            EK = self.__Equals2('EK')
+            EK = self.__Equals2('EK', file_content)
             self.values['EK'].append(float(EK)/float(Ne))
 
             # ENuc
-            ENuc = self.__Equals2('ENuc')
+            ENuc = self.__Equals2('ENuc', file_content)
             self.values['ENuc'].append(float(ENuc)/float(Ne))
 
             # Dipole moment
-            Dm = self.__Equals2('Tot')
+            Dm = self.__Equals2('Tot', file_content)
             self.values['Dipole'].append(Dm)
 
+            # Coordinates
+            dipole, quadrupole = self.__coordinates(file_content)
+            
+            for coordinates in (dipole, quadrupole):
+                for value in coordinates:
+                    name = value[0]
+                    self.values[name].append(float(value[1]))
+
         for file in CI:
-            self.__Internal_file_selected = file
-            CIE = self.__Equals2('DE\(Corr\)')
+            
+            with open(file, 'r') as log_file:
+                file_content = log_file.readlines()
+
+            CIE = self.__Equals2('DE\(Corr\)', file_content)
 
             self.values['CIe'].append(CIE)
 

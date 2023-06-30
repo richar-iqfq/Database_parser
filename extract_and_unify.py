@@ -10,7 +10,7 @@ if __name__=='__main__':
     # t_checker.check(move=True)
     
     output_path = 'extracted_data'
-    output_keywords = 'AA'
+    output_keywords = 'neutro'
 
     mb = Extractor(output_path)
-    mb.extract(unify=True, output_keywords=output_keywords, charge=0)
+    mb.extract(unify=True, output_keywords=output_keywords, charge=0, force=True)

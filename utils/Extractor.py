@@ -45,7 +45,7 @@ class Extractor():
             for fail in failed:
                 txt.write(f'{fail}.txt')
 
-    def extract(self, unify=True, output_keywords='AA', charge=0):
+    def extract(self, unify=True, output_keywords='AA', charge=0, force=False):
         '''
         Extract the data from the HF and CI files
 
@@ -61,7 +61,7 @@ class Extractor():
         print(f'Writing data files on {self.output_path}')
         for folder in self.folders:
             folder_path = os.path.join(self.root, folder)
-            if not os.path.isfile(os.path.join(folder_path, self.output_path, 'data.csv')):
+            if not os.path.isfile(os.path.join(folder_path, self.output_path, 'data.csv')) or force:
                 searcher = MainLogReader(folder, self.output_path)
                 searcher.search()
                 searcher.Save()
