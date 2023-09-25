@@ -49,6 +49,13 @@ def launcher5(index):
 
     return index, (theta_opt, mu_opt, b_opt, Err)
 
+def launcher6(index):
+    ID = IDS[index]
+    optimizer[ID].Run_boptimization(6)
+    theta_opt, mu_opt, b_opt, Err = optimizer[ID].get_values(type=6)
+
+    return index, (theta_opt, mu_opt, b_opt, Err)
+
 #============================== For Ecorr prediction =================================
 def update_conv(ans):
     conv_values[ans[0]] = ans[1]
@@ -77,6 +84,11 @@ def conv4(index):
 def conv5(index):
     ID = IDS[index]
     Ecorr_p, theta_p, mu_p, _ = optimizer[ID].Recover_Ecorr(b5_test[ID], 5)
+    return index, (Ecorr_p, theta_p, mu_p)
+
+def conv6(index):
+    ID = IDS[index]
+    Ecorr_p, theta_p, mu_p, _ = optimizer[ID].Recover_Ecorr(b6_test[ID], 6)
     return index, (Ecorr_p, theta_p, mu_p)
 
 class MainCalculator():
@@ -132,7 +144,7 @@ class MainCalculator():
         alpha (`float`):
             alpha value
     '''
-    def __init__(self, output_path, calc_types=(1, 2, 3, 4, 5), cores='All', tolerance=None, options=None):
+    def __init__(self, output_path, calc_types=(1, 2, 3, 4, 5, 6), cores='All', tolerance=None, options=None):
         self.output_path = output_path
         self.calc_types = calc_types
         self.cores = cores
@@ -178,11 +190,13 @@ class MainCalculator():
             'B_opt3' : [],
             'B_opt4' : [],
             'B_opt5' : [],
+            'B_opt6' : [],
             'Err1' : [],
             'Err2' : [],
             'Err3' : [],
             'Err4' : [],
             'Err5' : [],
+            'Err6' : []
         }
 
         optimizer = {}
@@ -359,6 +373,36 @@ class MainCalculator():
             file_name = os.path.join(save_path2, f'optim5_a{alpha}')
             np.save(file_name, optim_values) #Save the results in case of breaking
 
+        if 6 in self.calc_types:
+            # Calc for b6
+            optim_values = np.zeros([len(IDS), 4])
+
+            pool = Pool(processes=self.cores if self.cores != 'All' else None)
+
+            print('.............')
+            print(f'Optimizing b6')
+            pbar = tqdm(total=len(IDS), desc='Molecules', colour='cyan')
+            for i in range(len(IDS)):
+                pool.apply_async(launcher6, args=(i,), callback=update)
+            
+            pool.close()
+            pool.join()
+            pbar.close()
+
+            if not flag:
+                for i in range(len(optim_values)):
+                    optimized_values['Theta'].append(optim_values[i][0])
+                    optimized_values['Mu'].append(optim_values[i][1])
+
+                flag = True
+
+            for i in range(len(optim_values)):
+                optimized_values['B_opt6'].append(optim_values[i][2])
+                optimized_values['Err6'].append(optim_values[i][3])
+
+            file_name = os.path.join(save_path2, f'optim6_a{alpha}')
+            np.save(file_name, optim_values) #Save the results in case of breaking
+
         print('Optimization Completed :D')
         print('Saving data...')
 
@@ -399,7 +443,7 @@ class MainCalculator():
         alpha (`float`):
             alpha value
         '''
-        global optimizer, IDS, pbar, conv_values, b1_test, b2_test, b3_test, b4_test, b5_test
+        global optimizer, IDS, pbar, conv_values, b1_test, b2_test, b3_test, b4_test, b5_test, b6_test
         
         root = os.getcwd()
         save_path = os.path.join(root, 'results', 'recovering', 'saved_values', self.output_path)
@@ -412,6 +456,7 @@ class MainCalculator():
         b3_test = {}
         b4_test = {}
         b5_test = {}
+        b6_test = {}
         final_values = {}
 
         loader = Dataloader(database, energies)
@@ -428,6 +473,7 @@ class MainCalculator():
             b3_test[ID] = dataset[ID]['B_opt3']*percent
             b4_test[ID] = dataset[ID]['B_opt4']*percent
             b5_test[ID] = dataset[ID]['B_opt5']*percent
+            b6_test[ID] = dataset[ID]['B_opt6']*percent
 
             b0 = 1
             mu0 = -0.2
@@ -562,6 +608,32 @@ class MainCalculator():
             final_values['Ecorr_5'] = conv_values[:, 0]
             final_values['Theta_5'] = conv_values[:, 1]
             final_values['Mu_5'] = conv_values[:, 2]
+            
+            del(pool)
+        
+        # ====================== Run 6 ===================================
+        if 6 in self.calc_types:
+            conv_values = np.zeros([len(IDS), 3])
+
+            pool = Pool(processes=self.cores if self.cores != 'All' else None)
+
+            print('.'*20)
+            print('Running Expansion 6')
+            pbar = tqdm(total=len(IDS), desc='Molecules', colour='cyan')
+
+            for i in range(len(IDS)):
+                pool.apply_async(conv6, args=(i, ), callback=update_conv)
+
+            pool.close()
+            pool.join()
+            pbar.close()
+
+            file_name = os.path.join(save_path, f'Ecorrb6_a{alpha}_perc{percent}')
+            np.save(file_name, conv_values) #Save the results in case of breaking
+
+            final_values['Ecorr_6'] = conv_values[:, 0]
+            final_values['Theta_6'] = conv_values[:, 1]
+            final_values['Mu_6'] = conv_values[:, 2]
             
             del(pool)
 

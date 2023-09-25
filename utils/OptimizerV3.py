@@ -131,6 +131,7 @@ class b_optimizer():
         Sum_c = 0
         Sum_d = 0
         Sum_e = 0
+        Sum_f = 0
 
         for energy in self.orbital_energies:
             ni = self.Occupation(energy, theta, mu)
@@ -155,6 +156,10 @@ class b_optimizer():
             if expansion >= 5:
                 sum_ei = ci*(1 - 30*ci*(1 - 4*ci))*(b*mu - energy)**5
                 Sum_e += sum_ei
+
+            if expansion >= 6:
+                sum_fi = ci*(1 - 2*ni)*(1 + 60*ci*(60*ci - 1))*(b*mu - energy)**6
+                Sum_f += sum_fi
 
         expansion_terms = 0
 
@@ -182,6 +187,11 @@ class b_optimizer():
             term_5 = ((theta**5)*Sum_e)/(120*self.Ne)
 
             expansion_terms += term_5
+
+        if expansion >= 6:
+            term_6 = ((theta**6)*Sum_f)/(720*self.Ne)
+
+            expansion_terms += term_6
 
         S_avrg = self.alpha + expansion_terms
 

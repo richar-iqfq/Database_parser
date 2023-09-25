@@ -35,6 +35,11 @@ def conv5(index):
     Ecorr_p, theta_p, mu_p, _ = optimizer[ID].Recover_Ecorr(b_test[ID], 5)
     return index, (Ecorr_p, theta_p, mu_p)
 
+def conv6(index):
+    ID = IDS[index]
+    Ecorr_p, theta_p, mu_p, _ = optimizer[ID].Recover_Ecorr(b_test[ID], 6)
+    return index, (Ecorr_p, theta_p, mu_p)
+
 class Calculator():
     def __init__(self, output_path, calc_type=1, cores='All', tolerance=None):
         self.output_path = output_path
@@ -212,5 +217,31 @@ class Calculator():
             final_values['Ecorr_5'] = conv_values[:, 0]
             final_values['Theta_5'] = conv_values[:, 1]
             final_values['Mu_5'] = conv_values[:, 2]
+
+            del(pool)
+
+        #--------------------------------------------- Run 6 ----------------------------------------------
+        if self.calc_type == 6:
+            conv_values = np.zeros([len(IDS), 3])
+
+            pool = Pool(processes=self.cores if self.cores != 'All' else None)
+
+            print('.'*20)
+            print('Running Expansion 6')
+            pbar = tqdm(total=len(IDS), desc='Molecules', colour='cyan')
+            
+            for i in range(len(IDS)):
+                pool.apply_async(conv6, args=(i, ), callback=update_conv)
+
+            pool.close()
+            pool.join()
+            pbar.close()
+
+            file_name = os.path.join(save_path, f'Ecorrb6_a{alpha}')
+            np.save(file_name, conv_values) #Save the results in case of breaking
+
+            final_values['Ecorr_6'] = conv_values[:, 0]
+            final_values['Theta_6'] = conv_values[:, 1]
+            final_values['Mu_6'] = conv_values[:, 2]
 
             del(pool)
