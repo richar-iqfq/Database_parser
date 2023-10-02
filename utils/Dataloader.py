@@ -84,6 +84,8 @@ class Dataloader():
                     'B_opt3' : self.data['B_opt3'][i],
                     'B_opt4' : self.data['B_opt4'][i],
                     'B_opt5' : self.data['B_opt5'][i],
+                    'B_opt6' : self.data['B_opt6'][i],
+                    'B_opt7' : self.data['B_opt7'][i],
                     'Energies' : [energie for energie in self.energies[ID].dropna()]
                 }
         

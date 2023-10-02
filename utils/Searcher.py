@@ -34,7 +34,7 @@ class MainLogReader():
                             'Homo-2', 'Homo-1', 'Homo', 'Lumo', 
                             'Lumo+1', 'Lumo+2', 'Lumo+3', 'Lumo+4',
                             'CIe', 'HF', 'ET', 'EV', 'EJ', 'EK', 
-                            'ENuc', 'Dipole', 'Factor', 'X', 'Y',
+                            'ENuc', 'Dipole', 'Volume', 'Factor', 'X', 'Y',
                             'Z', 'XX', 'YY', 'ZZ', 'XY', 'XZ', 'YZ']
         
     def __orbitals(self, file_content):
@@ -232,6 +232,23 @@ class MainLogReader():
 
         return int(ae) + int(be)
     
+    def __Volume(self, file_content):
+        re_volume = r'Molar volume ='
+        re_value = r'(\d+.\d*)\s+cm**3/mol'
+
+        result = ''
+
+        for line in file_content:
+            match = re.search(re_volume)
+
+            if match:
+                result = line
+                break
+
+        volume = re.search(re_value, result).group(1)
+
+        return volume
+    
     def __coordinates(self, file_content):
         re_dipole = r'^\s+Dipole\s+moment' # Dipole initial line
         re_quadrupole = r'^\s+Quadrupole\s+moment' # Quadrupole initial line
@@ -376,6 +393,10 @@ class MainLogReader():
             # Dipole moment
             Dm = self.__Equals2('Tot', file_content)
             self.values['Dipole'].append(Dm)
+
+            # Volume
+            Vol = self.__Volume(file_content)
+            self.values['Volume'].append(Vol)
 
             # Coordinates
             dipole, quadrupole = self.__coordinates(file_content)
