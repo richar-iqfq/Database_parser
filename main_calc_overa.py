@@ -11,7 +11,7 @@ as well as the statistical analysis for the percent values.
 
 if __name__=='__main__':
     cores = 14
-    calc_types=(1, 2, 3, 4, 5)
+    calc_types=(1, 2, 3, 4, 5, 6, 7, 8)
     alpha_list = (-0.27, 0, 0)
     
     percent = (0.9, 0.95, 0.96, 0.97, 1, 1.03, 1.04, 1.05, 1.1)

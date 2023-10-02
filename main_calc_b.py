@@ -6,7 +6,7 @@ the corroboration of the convergence for the molecules
 '''
 
 alpha = (-0.27)
-calc_types = (0, 0, 0, 4, 0)
+calc_types = (0, 0, 0, 6, 0)
 
 if __name__=='__main__':
     cores = 50
