@@ -395,6 +395,7 @@ class MainCalculator():
             print('.............')
             print(f'Optimizing b6')
             pbar = tqdm(total=len(IDS), desc='Molecules', colour='cyan')
+
             for i in range(len(IDS)):
                 pool.apply_async(launcher6, args=(i,), callback=update)
             
@@ -505,6 +506,7 @@ class MainCalculator():
 
         loader = Dataloader(database, energies)
         dataset = loader.load(raw=False)
+
         IDS = loader.get_IDS()
 
         for ID in IDS:

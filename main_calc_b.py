@@ -6,10 +6,10 @@ the corroboration of the convergence for the molecules
 '''
 
 alpha = (-0.27)
-calc_types = (0, 0, 0, 6, 0)
+calc_types = (0, 0, 0, 4, 0)
 
 if __name__=='__main__':
-    cores = 50
+    cores = 10
     tolerance = {
         'Ne_calc' : 1E-7,
         'Energy_S' : 1E-9,
@@ -17,8 +17,8 @@ if __name__=='__main__':
         'Recover' : 1E-9
     }
 
-    database = 'Database_AA.csv'
-    energies = 'Database_Energies_AA.feather'
+    database = 'log_files/extracted_data/data.csv'
+    energies = 'log_files/extracted_data/energies.feather'
 
     output_path = f'a{alpha}_final-results'
 
