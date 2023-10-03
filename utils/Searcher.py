@@ -362,6 +362,7 @@ class MainLogReader():
             index = file.rfind('/') + 1
             t_file = file[index::]
             ID = re.search(r'[/\\]?([A-Z0-9]+[_a-z]*).log', t_file).group(1)
+            ID = ID.replace('_', '')
             self.values['ID'].append(ID)
 
             # NAtoms
