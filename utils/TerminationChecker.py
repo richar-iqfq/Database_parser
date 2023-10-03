@@ -14,15 +14,13 @@ class CheckNormalT():
     move (`bool`):
         If True, move files inside folder 'Incomplete'
     '''
-    def __init__(self):
-        self.base_path = os.getcwd()
+    def __init__(self, input_path):
         self.NORMAL = 'Normal termination'
         
         # Valuable re variables
         self.normal_re = re.compile(self.NORMAL)
 
-        sets = [os.path.join(self.base_path, set) for set in os.listdir(self.base_path) if 'SET' in set]
-        self.sets = sorted(sets)
+        self.input_path = input_path
 
     def check(self, move=True):
         '''
@@ -35,74 +33,69 @@ class CheckNormalT():
         '''
         print('Checking all files before run calculations...\n')
         
-        for path in self.sets:
-            HFt = []
-            CIt = []
+        HFt = []
+        CIt = []
+        
+        for Dir, SubDir, Files in os.walk(self.input_path):
+            if '80-e' in Dir or 'incomplete' in Dir:
+                continue
+            elif 'HF' in Dir:
+                HF_path = Dir
+                for file in Files:
+                    if 'log' in file:
+                        HFt.append(os.path.join(Dir, file))
+            elif 'CI' in Dir:
+                CI_path = Dir
+                for file in Files:
+                    if 'log' in file:
+                        CIt.append(os.path.join(Dir, file))
             
-            for Dir, SubDir, Files in os.walk(path):
-                if '80-e' in Dir or 'incomplete' in Dir:
-                    continue
-                elif 'HF' in Dir:
-                    HF_p = Dir
-                    for file in Files:
-                        if 'log' in file:
-                            HFt.append(os.path.join(Dir, file))
-                elif 'CI' in Dir:
-                    CI_p = Dir
-                    for file in Files:
-                        if 'log' in file:
-                            CIt.append(os.path.join(Dir, file))
-                
-            for file in HFt:
+        for file in HFt:
 
-                    # Read all lines
-                    f = open(file, 'r')
-                    lines = f.readlines()
-                    f.close()
+                # Read all lines
+                f = open(file, 'r')
+                lines = f.readlines()
+                f.close()
 
-                    search = str(self.normal_re.search(str(lines[len(lines)-1])))
+                search = str(self.normal_re.search(str(lines[len(lines)-1])))
 
-                    if search == 'None':
-                        file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
+                if search == 'None':
+                    file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
 
-                        destination_p = os.path.join(HF_p, 'incomplete_calculations')
+                    destination_p = os.path.join(HF_path, 'incomplete_calculations')
 
-                        try:
-                            os.mkdir(destination_p)
-                        except Exception:
-                            pass
+                    if not os.path.isdir(destination_p):
+                        os.mkdir(destination_p)
 
-                        print ('Incomplete gaussian calculation for', file_name)
+                    print ('Incomplete gaussian calculation for', file_name)
 
-                        source = file
-                        destin = os.path.join(destination_p, file_name)
+                    source = file
+                    destin = os.path.join(destination_p, file_name)
 
-                        if move:
-                            shutil.move(source, destin)
+                    if move:
+                        shutil.move(source, destin)
 
-            for file in CIt:
+        for file in CIt:
 
-                    # Read all lines
-                    f = open(file, 'r')
-                    lines = f.readlines()
-                    f.close()
+                # Read all lines
+                f = open(file, 'r')
+                lines = f.readlines()
+                f.close()
 
-                    search = str(self.normal_re.search(str(lines[len(lines)-1])))
+                search = str(self.normal_re.search(str(lines[len(lines)-1])))
 
-                    if search == 'None':
-                        file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
+                if search == 'None':
+                    file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
 
-                        destination_p = os.path.join(CI_p, 'incomplete_calculations')
+                    destination_p = os.path.join(CI_path, 'incomplete_calculations')
 
-                        try:    
-                            os.mkdir(destination_p)
-                        except Exception:
-                            pass
+                    if not os.path.isdir(destination_p):
+                        os.mkdir(destination_p)
 
-                        print('Incomplete gaussian calculation for', file_name)
+                    print('Incomplete gaussian calculation for', file_name)
 
-                        source = file
-                        destin = os.path.join(destination_p, file_name)
-                        
-                        if move:
-                            shutil.move(source, destin)
+                    source = file
+                    destin = os.path.join(destination_p, file_name)
+                    
+                    if move:
+                        shutil.move(source, destin)

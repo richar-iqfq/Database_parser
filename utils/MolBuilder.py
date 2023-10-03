@@ -10,10 +10,9 @@ class MolBuilder():
 	Parameters
 	----------
 	'''
-	def __init__(self, output_path, charge=0):
+	def __init__(self, output_path):
 		self.output_xyz = os.path.join(output_path, 'xyz_molecules')
 		self.output_img = os.path.join(output_path, 'img_molecules')
-		self.charge = charge
 
 		if not os.path.isdir(self.output_xyz):
 			os.makedirs(self.output_xyz)
@@ -111,7 +110,7 @@ class MolBuilder():
 		with open(output_file, 'w') as xyz:
 			xyz.writelines(xyz_file)
 
-	def build_xyz(self, file, save=True, force=True):
+	def build_xyz(self, file, charge=0, save=True, force=True):
 		lines = self.__get_lines(file)
 		matrix = self.__find_StandardOrientation(lines)
 		matrix_corrected = self.__correct_matrix(matrix)
@@ -126,20 +125,20 @@ class MolBuilder():
 		if save:
 			self.__write_xyz(xyz_file, output_file, force=force)
 
-	def __get_mol(self, xyz_file):
+	def __get_mol(self, xyz_file, charge=0):
 		mol = Chem.MolFromXYZFile(xyz_file)
 		conn_mol = Chem.Mol(mol)
-		rdDetermineBonds.DetermineConnectivity(conn_mol, useHueckel=True, charge=self.charge)
+		rdDetermineBonds.DetermineConnectivity(conn_mol, useHueckel=True, charge=charge)
 
 		try:
-			rdDetermineBonds.DetermineBonds(conn_mol, useHueckel=True, charge=self.charge)
+			rdDetermineBonds.DetermineBonds(conn_mol, useHueckel=True, charge=charge)
 		except:
 			pass
 
 		return conn_mol
 
-	def get_smiles(self, xyz_file):
-		conn_mol = self.__get_mol(xyz_file)
+	def get_smiles(self, xyz_file, charge):
+		conn_mol = self.__get_mol(xyz_file, charge=charge)
 
 		if not conn_mol:
 			return None
@@ -148,8 +147,8 @@ class MolBuilder():
 		
 		return smiles
 
-	def get_image(self, xyz_file, show=False, save=True):
-		smiles = self.get_smiles(xyz_file)
+	def get_image(self, xyz_file, charge, show=False, save=True):
+		smiles = self.get_smiles(xyz_file, charge)
 		conn_mol = Chem.MolFromSmiles(smiles)
 		
 		if not conn_mol:

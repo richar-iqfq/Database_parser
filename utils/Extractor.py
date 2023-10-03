@@ -25,12 +25,16 @@ class Extractor():
     output_keywords (`str`)
         keywords to append at the result file, default is 'AA'
     '''
-    def __init__(self, output_path):
+    def __init__(self, input_path, output_path):
         self.root = os.getcwd()
-        sets = [folder for folder in os.listdir(self.root) if 'set' in folder.lower()]
         
-        self.folders = sorted(sets)
-        self.output_path = output_path
+        for folder in os.listdir(input_path):
+            if 'HF' in folder:
+                self.HF_path = os.path.join(input_path, folder)
+                break
+        
+        self.input_path = input_path
+        self.output_path = os.path.join(input_path, output_path)
 
     def __save_smiles(self, mols_data, smiles, path):
         df = pd.DataFrame({
@@ -45,7 +49,7 @@ class Extractor():
             for fail in failed:
                 txt.write(f'{fail}.txt')
 
-    def extract(self, unify=True, output_keywords='AA', charge=0, force=False):
+    def extract(self, force=False):
         '''
         Extract the data from the HF and CI files
 
@@ -57,22 +61,21 @@ class Extractor():
         output_keywords (`str`)
             keywords to append at the result file, default is 'AA'
         '''
+
         # Data extraction
         print(f'Writing data files on {self.output_path}')
-        for folder in self.folders:
-            folder_path = os.path.join(self.root, folder)
-            if not os.path.isfile(os.path.join(folder_path, self.output_path, 'data.csv')) or force:
-                searcher = MainLogReader(folder, self.output_path)
-                searcher.search()
-                searcher.Save()
 
-            HF_path = [os.path.join(folder_path, HF_path) for HF_path in os.listdir(folder_path) if 'HF' in HF_path]
-            builder = MolBuilder(os.path.join(folder_path, self.output_path), charge=charge)
+        if not os.path.isfile(os.path.join(self.output_path, 'data.csv')) or force:
+            searcher = MainLogReader(self.input_path, self.output_path)
+            searcher.search()
+            searcher.save()
 
-            log_files = [file for file in os.listdir(HF_path[0]) if '.log' in file]
+            builder = MolBuilder(self.output_path)
+
+            log_files = [file for file in os.listdir(self.HF_path) if '.log' in file]
 
             for log in log_files:
-                log_path = os.path.join(HF_path[0], log)
+                log_path = os.path.join(self.HF_path, log)
 
                 builder.build_xyz(log_path)
 
@@ -80,13 +83,25 @@ class Extractor():
             smiles = []
             failed = []
 
-            xyz_route = os.path.join(folder_path, self.output_path, 'xyz_molecules')
+            xyz_route = os.path.join(self.output_path, 'xyz_molecules')
             xyz_files = [file for file in os.listdir(xyz_route) if '.xyz' in file]
 
+            charge_keys = {
+            '_c' : 1,
+            '_a' : -1,
+            '_r' : 0
+            }
+
             for xyz in xyz_files:
-                ID = re.search(r'[/\\]?([A-Z0-9]+)[_a-z]*.xyz', xyz).group(1)
+                charge = 0
+                ID = re.search(r'[/\\]?([A-Z0-9]+[_a-z]*).xyz', xyz).group(1)
                 xyz_file = os.path.join(xyz_route, xyz)
-                smile = builder.get_smiles(xyz_file)
+
+                for key in charge_keys.keys():
+                    if key in xyz:
+                        charge = charge_keys[key]
+
+                smile = builder.get_smiles(xyz_file, charge)
                 
                 mols.append(ID)
                 if not smile:
@@ -96,14 +111,7 @@ class Extractor():
                 else:
                     smiles.append(smile)
                 
-                builder.get_image(xyz_file)
+                builder.get_image(xyz_file, charge)
 
-            self.__write_failed(failed, os.path.join(folder_path, self.output_path))
-            self.__save_smiles(mols, smiles, os.path.join(folder_path, self.output_path))
-
-        if unify:
-            print('Writing and cleaning final dataset')
-            file_name = raw_data_unify(self.output_path, output_keywords)
-            raw_data_cleaner(file_name, overwrite=True)
-
-    
+            self.__write_failed(failed, self.output_path)
+            self.__save_smiles(mols, smiles, self.output_path)

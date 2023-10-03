@@ -14,3 +14,4 @@ nul
 run.out
 predictions/
 log_files/
+test*

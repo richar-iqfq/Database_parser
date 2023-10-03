@@ -168,3 +168,14 @@ def search_chlorides():
 
     df = pd.DataFrame({'Chlorides' : chlorides_list})
     df.to_csv('Database_Chlorides_AA.csv', index=False)
+
+def get_point_groups():
+    point_groups = [
+        'C1', 'C5', 'CI', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'D2', 'D3',
+        'D4', 'D5', 'D6', 'C2v', 'C3v', 'C4v', 'C5v', 'C6v', 'C2h', 'C3h', 'C4h',
+        'C5h', 'C6h', 'D2h', 'D3h', 'D4h', 'D5h', 'D6h', 'D8h', 'D2d', 'D3d', 'D4d',
+        'D5d', 'D6d', 'S4', 'S6', 'S8', 'T', 'Tk', 'Td', 'O', 'Oh', 'Cinfv', 'Dinfh',
+        'Ih'
+    ]
+
+    return point_groups

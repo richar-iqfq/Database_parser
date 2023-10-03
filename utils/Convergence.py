@@ -23,7 +23,7 @@ class Writter():
     run_check()
         start computation and save files.
     '''
-    def __init__(self, database, calc_types=(1,2,3,4,5)):
+    def __init__(self, database, calc_types=(1,2,3,4,5,6,7)):
         self.database_name = database[0:-4]
         self.database = pd.read_csv(database)
         self.calc_types = calc_types

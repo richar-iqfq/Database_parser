@@ -1,6 +1,7 @@
 import re
 import os
 import pandas as pd
+from tqdm import tqdm
 
 '''
 Extract the information from the log files in the input_path given to the class
@@ -34,8 +35,9 @@ class MainLogReader():
                             'Homo-2', 'Homo-1', 'Homo', 'Lumo', 
                             'Lumo+1', 'Lumo+2', 'Lumo+3', 'Lumo+4',
                             'CIe', 'HF', 'ET', 'EV', 'EJ', 'EK', 
-                            'ENuc', 'Dipole', 'Volume', 'Factor', 'X', 'Y',
-                            'Z', 'XX', 'YY', 'ZZ', 'XY', 'XZ', 'YZ']
+                            'ENuc', 'Dipole', 'Volume', 'Pgroup',
+                            'Factor', 'X', 'Y', 'Z', 'XX', 'YY', 'ZZ',
+                            'XY', 'XZ', 'YZ']
         
     def __orbitals(self, file_content):
         orbital_energies = {'a_homo' : [],
@@ -233,22 +235,46 @@ class MainLogReader():
         return int(ae) + int(be)
     
     def __Volume(self, file_content):
-        re_volume = r'Molar volume ='
-        re_value = r'(\d+.\d*)\s+cm**3/mol'
+        re_volume = r'Molar volume'
+        re_value = r'(\d+.\d*)\s+cm\*\*3\/mol'
 
         result = ''
 
         for line in file_content:
-            match = re.search(re_volume)
+            match = re.search(re_volume, line)
 
             if match:
                 result = line
                 break
-
+        
         volume = re.search(re_value, result).group(1)
 
         return volume
     
+    def __point_group(self, file_content):
+        re_line = r'Full point group'
+        re_point_group = r"group\s+([A-Z]+\*?\d*\w*)\s+"
+
+        result = ''
+
+        for line in file_content:
+            match = re.search(re_line, line)
+
+            if match:
+                result = line
+                break
+        
+        match = re.search(re_point_group, result)
+
+        if match:
+            point_group = match.group(1)
+        else:
+            print(f're failed for line: {result}')
+            input('Press enter to abort')
+            exit()
+        
+        return point_group
+
     def __coordinates(self, file_content):
         re_dipole = r'^\s+Dipole\s+moment' # Dipole initial line
         re_quadrupole = r'^\s+Quadrupole\s+moment' # Quadrupole initial line
@@ -321,19 +347,21 @@ class MainLogReader():
         get (`bool`)
             if get return self.values, default is False
         '''
+        print('Initializing...\n')
         self.__build_structure()
 
         HF, CI = self.__get_files()
 
-        for file in HF:
+        pbar_HF = tqdm(total=len(HF), desc='HF files', colour='cyan')
 
+        for file in HF:
             with open(file, 'r') as log_file:
                 file_content = log_file.readlines()
             
             # Identifiers
             index = file.rfind('/') + 1
             t_file = file[index::]
-            ID = re.search(r'[/\\]?([A-Z0-9]+)[_a-z]*.log', t_file).group(1)
+            ID = re.search(r'[/\\]?([A-Z0-9]+[_a-z]*).log', t_file).group(1)
             self.values['ID'].append(ID)
 
             # NAtoms
@@ -398,6 +426,10 @@ class MainLogReader():
             Vol = self.__Volume(file_content)
             self.values['Volume'].append(Vol)
 
+            # Point group
+            group = self.__point_group(file_content)
+            self.values['Pgroup'].append(group)
+
             # Coordinates
             dipole, quadrupole = self.__coordinates(file_content)
             
@@ -405,9 +437,13 @@ class MainLogReader():
                 for value in coordinates:
                     name = value[0]
                     self.values[name].append(float(value[1]))
+            
+            pbar_HF.update()
+        
+        print('\n')
+        pbar_CI = tqdm(total=len(CI), desc='CI files', colour='cyan')
 
         for file in CI:
-            
             with open(file, 'r') as log_file:
                 file_content = log_file.readlines()
 
@@ -415,24 +451,24 @@ class MainLogReader():
 
             self.values['CIe'].append(CIE)
 
+            pbar_CI.update()
+
         if get:
             return self.values
 
-    def Save(self):
+    def save(self):
         '''
         Save the info into csv files to the output_path:  data.csv and energies.csv
         '''
-        main_path = os.path.join(os.getcwd(), self.input_path)
-        exit_path = os.path.join(main_path, self.output_path)
-        
-        if not os.path.isdir(exit_path):
-            os.mkdir(exit_path)
+        if not os.path.isdir(self.output_path):
+            os.mkdir(self.output_path)
         
         data = pd.DataFrame(self.values)
         data = data.sort_values(by=['ID'])
 
         energies_DF = pd.DataFrame(self.energies)
 
-        data.to_csv(exit_path + '/data.csv', index=False)
-        energies_DF.to_csv(exit_path + '/energies.csv', index=False)
+        data.to_csv(self.output_path + '/data.csv', index=False)
+        energies_DF.to_feather(self.output_path + '/energies.feather')
+        
         print('Exported')
