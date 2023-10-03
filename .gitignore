@@ -13,3 +13,4 @@ check.py
 nul
 run.out
 predictions/
+log_files/
