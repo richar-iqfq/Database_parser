@@ -12,3 +12,4 @@ check.py
 *.feather
 nul
 run.out
+predictions/
