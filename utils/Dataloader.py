@@ -58,35 +58,35 @@ class Dataloader():
         for i, ID in enumerate(mols):
             if raw:
                 values[ID] = {
-                    'NAtoms' : self.data['NAtoms'][i],
-                    'Ne' : self.data['Ne'][i],
-                    'Homo' : self.data['Homo'][i],
-                    'Lumo' : self.data['Lumo'][i],
-                    'CIe' : self.data['CIe'][i],
-                    'HF' : self.data['HF'][i],
-                    'Factor': self.data['Factor'][i],
-                    'Energies' : [energie for energie in self.energies[ID].dropna()]
+                    'NAtoms' : int(self.data['NAtoms'][i]),
+                    'Ne' : int(self.data['Ne'][i]),
+                    'Homo' : float(self.data['Homo'][i]),
+                    'Lumo' : float(self.data['Lumo'][i]),
+                    'CIe' : float(self.data['CIe'][i]),
+                    'HF' : float(self.data['HF'][i]),
+                    'Factor': int(self.data['Factor'][i]),
+                    'Energies' : [float(energie) for energie in self.energies[ID].dropna()]
                 }
 
             else:
                 values[ID] = {
-                    'NAtoms' : self.data['NAtoms'][i],
-                    'Ne' : self.data['Ne'][i],
-                    'Homo' : self.data['Homo'][i],
-                    'Lumo' : self.data['Lumo'][i],
-                    'CIe' : self.data['CIe'][i],
-                    'HF' : self.data['HF'][i],
-                    'Factor': self.data['Factor'][i],
-                    'Theta' : self.data['Theta'][i],
-                    'Mu' : self.data['Mu'][i],
-                    'B_opt1' : self.data['B_opt1'][i],
-                    'B_opt2' : self.data['B_opt2'][i],
-                    'B_opt3' : self.data['B_opt3'][i],
-                    'B_opt4' : self.data['B_opt4'][i],
-                    'B_opt5' : self.data['B_opt5'][i],
-                    'B_opt6' : self.data['B_opt6'][i],
-                    'B_opt7' : self.data['B_opt7'][i],
-                    'Energies' : [energie for energie in self.energies[ID].dropna()]
+                    'NAtoms' : int(self.data['NAtoms'][i]),
+                    'Ne' : int(self.data['Ne'][i]),
+                    'Homo' : float(self.data['Homo'][i]),
+                    'Lumo' : float(self.data['Lumo'][i]),
+                    'CIe' : float(self.data['CIe'][i]),
+                    'HF' : float(self.data['HF'][i]),
+                    'Factor': int(self.data['Factor'][i]),
+                    'Theta' : float(self.data['Theta'][i]),
+                    'Mu' : float(self.data['Mu'][i]),
+                    'B_opt1' : float(self.data['B_opt1'][i]),
+                    'B_opt2' : float(self.data['B_opt2'][i]),
+                    'B_opt3' : float(self.data['B_opt3'][i]),
+                    'B_opt4' : float(self.data['B_opt4'][i]),
+                    'B_opt5' : float(self.data['B_opt5'][i]),
+                    'B_opt6' : float(self.data['B_opt6'][i]),
+                    'B_opt7' : float(self.data['B_opt7'][i]),
+                    'Energies' : [float(energie) for energie in self.energies[ID].dropna()]
                 }
         
         return values
