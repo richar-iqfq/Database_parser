@@ -2,7 +2,7 @@ import re
 import shutil
 import os
 
-class CheckNormalT():
+class TerminationChecker():
     '''
     Check if every file in HF and CI folders is complete
 

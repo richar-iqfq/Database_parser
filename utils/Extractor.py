@@ -1,4 +1,4 @@
-from utils.Searcher import MainLogReader
+from utils.MainLogReader import MainLogReader
 from utils.Tools import raw_data_cleaner, raw_data_unify
 from utils.MolBuilder import MolBuilder
 import os
