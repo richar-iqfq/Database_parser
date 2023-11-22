@@ -1,2 +1,2 @@
-# Database_calculation
-Database reader, extractor and calculator for b
+# Database Parser
+Data reader and extractor from gaussian.log files.
