@@ -14,4 +14,10 @@ nul
 run.out
 predictions/
 log_files/
+*log_files/
 test*
+*.log
+*.jpg
+*.xyz
+*.txt
+*.ods

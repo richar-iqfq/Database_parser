@@ -94,7 +94,13 @@ class Extractor():
 
             for xyz in xyz_files:
                 charge = 0
-                ID = re.search(r'[/\\]?([A-Z0-9]+[_a-z]*).xyz', xyz).group(1)
+                ID = re.search(r'[/\\]?([A-Z0-9]+[_a-z]*).xyz', xyz)
+
+                if not ID:
+                    ID = re.search(r'[\/\\]?(\w+[\(\d+.\d+\)]+).xyz', xyz)
+                
+                ID = ID.group(1)
+
                 xyz_file = os.path.join(xyz_route, xyz)
 
                 for key in charge_keys.keys():

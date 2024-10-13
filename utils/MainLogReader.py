@@ -142,10 +142,18 @@ class MainLogReader():
             except:
                 E_homo2 = 0
             
-            E_homo1 = orbital_homo[-2]
-            E_homo = orbital_homo[-1]
+            try:
+                E_homo1 = orbital_homo[-2]
+            except:
+                E_homo1 = 0
+
+            E_homo = orbital_homo[-1]            
             E_lumo = orbital_lumo[0]
-            E_lumo1 = orbital_lumo[1]
+
+            try:
+                E_lumo1 = orbital_lumo[1]
+            except:
+                E_lumo1 = 0
 
             try:
                 E_lumo2 = orbital_lumo[2]
@@ -179,10 +187,18 @@ class MainLogReader():
             except:
                 E_homo2 = 0
             
-            E_homo1 = orbital_energies['a_homo'][-2]
+            try:
+                E_homo1 = orbital_energies['a_homo'][-2]
+            except:
+                E_homo1 = 0
+    
             E_homo = orbital_energies['a_homo'][-1]
             E_lumo = orbital_energies['a_lumo'][0]
-            E_lumo1 = orbital_energies['a_lumo'][1]
+
+            try:
+                E_lumo1 = orbital_energies['a_lumo'][1]
+            except:
+                E_lumo1 = 0
             
             try:
                 E_lumo2 = orbital_energies['a_lumo'][2]
@@ -213,6 +229,12 @@ class MainLogReader():
                     matches.append(line)
             value = re.search(RE_equalsto, matches[-1])
             return value.group(1)
+        # elif keyword == 'HF':
+        #     RE_equalsto = r'\\HF=([+-]?[0-9.]+)\\'
+        #     for line in file_content:
+        #         value = re.search(RE_equalsto, line)
+        #         if value != None:
+        #             return value.group(1)
         else:
             for line in file_content:
                 value = re.search(RE_equalsto, line)
@@ -239,6 +261,7 @@ class MainLogReader():
         re_value = r'(\d+.\d*)\s+cm\*\*3\/mol'
 
         result = ''
+        volume = None
 
         for line in file_content:
             match = re.search(re_volume, line)
@@ -247,7 +270,10 @@ class MainLogReader():
                 result = line
                 break
         
-        volume = re.search(re_value, result).group(1)
+        volume_match = re.search(re_value, result)
+
+        if volume_match:
+            volume = volume_match.group(1)
 
         return volume
     
@@ -355,14 +381,23 @@ class MainLogReader():
         pbar_HF = tqdm(total=len(HF), desc='HF files', colour='cyan')
 
         for file in HF:
+            # print(file)
             with open(file, 'r') as log_file:
                 file_content = log_file.readlines()
             
             # Identifiers
             index = file.rfind('/') + 1
             t_file = file[index::]
-            ID = re.search(r'[/\\]?([A-Z0-9]+[_a-z]*).log', t_file).group(1)
-            ID = ID.replace('_', '')
+
+            # ID = re.search(r'[/\\]?([A-Z0-9]+[_a-z]*).log', t_file)
+            
+            # if ID:
+            #     ID = ID.replace('_', '')
+            # else:
+            #     ID = re.search(r'[\/\\]?(\w+[\(\d+.\d+\)]+).log', t_file)
+            
+            # ID = ID.group(1)
+            ID = t_file.replace('.log', '')
             self.values['ID'].append(ID)
 
             # NAtoms
@@ -399,7 +434,10 @@ class MainLogReader():
 
             # ET
             ET = self.__Equals2('ET', file_content)
-            self.values['ET'].append(float(ET)/float(Ne))
+            if ET != None:
+                self.values['ET'].append(float(ET)/float(Ne))
+            else:
+                self.values['ET'].append('NaN')
 
             # EV
             EV = self.__Equals2('EV', file_content)
@@ -409,27 +447,45 @@ class MainLogReader():
                 self.values['EV'].append('NaN')
             # EJ
             EJ = self.__Equals2('EJ', file_content)
-            self.values['EJ'].append(float(EJ)/float(Ne))
+            if EV != None:
+                self.values['EJ'].append(float(EJ)/float(Ne))
+            else:
+                self.values['EJ'].append('NaN')
 
             # EK
             EK = self.__Equals2('EK', file_content)
-            self.values['EK'].append(float(EK)/float(Ne))
+            if EK != None:
+                self.values['EK'].append(float(EK)/float(Ne))
+            else:
+                self.values['EK'].append('NaN')
 
             # ENuc
             ENuc = self.__Equals2('ENuc', file_content)
-            self.values['ENuc'].append(float(ENuc)/float(Ne))
+            if ENuc != None:
+                self.values['ENuc'].append(float(ENuc)/float(Ne))
+            else:
+                self.values['ENuc'].append('NaN')
 
             # Dipole moment
             Dm = self.__Equals2('Tot', file_content)
-            self.values['Dipole'].append(Dm)
+            if Dm != None:
+                self.values['Dipole'].append(Dm)
+            else:
+                self.values['Dipole'].append('NaN')
 
             # Volume
             Vol = self.__Volume(file_content)
-            self.values['Volume'].append(Vol)
+            if Vol != None:
+                self.values['Volume'].append(Vol)
+            else:
+                self.values['Volume'].append('NaN')
 
             # Point group
             group = self.__point_group(file_content)
-            self.values['Pgroup'].append(group)
+            if group != None:
+                self.values['Pgroup'].append(group)
+            else:
+                self.values['Pgroup'].append('NaN')
 
             # Coordinates
             dipole, quadrupole = self.__coordinates(file_content)

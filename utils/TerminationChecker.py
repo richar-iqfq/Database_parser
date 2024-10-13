@@ -52,50 +52,56 @@ class TerminationChecker():
             
         for file in HFt:
 
-                # Read all lines
-                f = open(file, 'r')
-                lines = f.readlines()
-                f.close()
+            # Read all lines
+            f = open(file, 'r')
+            lines = f.readlines()
+            f.close()
 
-                search = str(self.normal_re.search(str(lines[len(lines)-1])))
+            search = str(self.normal_re.search(str(lines[len(lines)-1])))
 
-                if search == 'None':
-                    file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
+            if search == 'None':
+                index = file.rfind('/') + 1
+                t_file = file[index::]
+                # file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
+                file_name = t_file.replace('.log', '')
 
-                    destination_p = os.path.join(HF_path, 'incomplete_calculations')
+                destination_p = os.path.join(HF_path, 'incomplete_calculations')
 
-                    if not os.path.isdir(destination_p):
-                        os.mkdir(destination_p)
+                if not os.path.isdir(destination_p):
+                    os.mkdir(destination_p)
 
-                    print ('Incomplete gaussian calculation for', file_name)
+                print ('Incomplete gaussian calculation for', file_name)
 
-                    source = file
-                    destin = os.path.join(destination_p, file_name)
+                source = file
+                destin = os.path.join(destination_p, file_name)
 
-                    if move:
-                        shutil.move(source, destin)
+                if move:
+                    shutil.move(source, destin)
 
         for file in CIt:
 
-                # Read all lines
-                f = open(file, 'r')
-                lines = f.readlines()
-                f.close()
+            # Read all lines
+            f = open(file, 'r')
+            lines = f.readlines()
+            f.close()
 
-                search = str(self.normal_re.search(str(lines[len(lines)-1])))
+            search = str(self.normal_re.search(str(lines[len(lines)-1])))
 
-                if search == 'None':
-                    file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
+            if search == 'None':
+                index = file.rfind('/') + 1
+                t_file = file[index::]
+                # file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
+                file_name = t_file.replace('.log', '')
+                
+                destination_p = os.path.join(CI_path, 'incomplete_calculations')
 
-                    destination_p = os.path.join(CI_path, 'incomplete_calculations')
+                if not os.path.isdir(destination_p):
+                    os.mkdir(destination_p)
 
-                    if not os.path.isdir(destination_p):
-                        os.mkdir(destination_p)
+                print('Incomplete gaussian calculation for', file_name)
 
-                    print('Incomplete gaussian calculation for', file_name)
-
-                    source = file
-                    destin = os.path.join(destination_p, file_name)
-                    
-                    if move:
-                        shutil.move(source, destin)
+                source = file
+                destin = os.path.join(destination_p, file_name)
+                
+                if move:
+                    shutil.move(source, destin)
