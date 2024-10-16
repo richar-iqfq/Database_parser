@@ -26,6 +26,7 @@ class MainLogReader():
     save():
         Save the info into csv files to the output_path:  data.csv and energies.csv
     '''
+
     def __init__(self, input_path, output_path):
         self.input_path = input_path
         self.output_path = output_path
