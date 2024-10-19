@@ -1,6 +1,6 @@
 import re
 
-energie_regex = re.compile(r'\s+([+-]?\d+.\d*)')
+energie_regex = re.compile(r'\s+([+-]?[0-9.]+[Ee]?[+-]?\d+)')
 alpha_homo_regex = re.compile(r'Alpha\s+occ.')
 alpha_lumo_regex = re.compile(r'Alpha\s+virt.')
 beta_homo_regex = re.compile(r'Beta\s+occ.')
@@ -14,5 +14,5 @@ point_group_value_regex = re.compile(r"group\s+([A-Z]+\*?\d*\w*)\s+")
 dipole_line_regex = re.compile(r'^\s+Dipole\s+moment')
 quadrupole_line_regex = re.compile(r'^\s+Quadrupole\s+moment')
 traceless_line_regex = re.compile(r'^\s+Traceless\s+Quadrupole')
-coordinates_values_regex = (r'\s+([XYZ]{1,2})=\s+([-+]?\d+.\d*)')
-equals_to_pattern = r'\s+{}=\s*([+-]?[0-9.]+)'
+coordinates_values_regex = re.compile(r'\s+([XYZ]{1,2})=\s+([+-]?[0-9.]+[Ee]?[+-]?\d+)')
+equals_to_pattern = r'\s+{}=\s*([+-]?[0-9.]+[Ee]?[+-]?\d+)'
