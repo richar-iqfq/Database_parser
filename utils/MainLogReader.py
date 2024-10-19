@@ -120,7 +120,7 @@ class MainLogReader():
         E_homo1 = self.get_by_index(orbital_homo, -2)
 
         E_homo = self.get_by_index(orbital_homo, -1)
-        E_lumo = self.get_by_index(orbital_homo, 0)
+        E_lumo = self.get_by_index(orbital_lumo, 0)
 
         E_lumo1 = self.get_by_index(orbital_lumo, 1)
         E_lumo2 = self.get_by_index(orbital_lumo, 2)
@@ -281,115 +281,118 @@ class MainLogReader():
 
         pbar_HF = tqdm(total=len(HF), desc='HF files', colour='cyan')
 
-        for file in HF:
-            # print(file)
-            with open(file, 'r') as log_file:
-                file_content = log_file.readlines()
-            
-            # Identifiers
-            index = file.rfind('/') + 1
-            t_file = file[index::]
+        try:
+            for file in HF:
+                with open(file, 'r') as log_file:
+                    file_content = log_file.readlines()
+                
+                # Identifiers
+                index = file.rfind('/') + 1
+                t_file = file[index::]
 
-            ID = t_file.replace('.log', '')
-            self.values['ID'].append(ID)
+                ID = t_file.replace('.log', '')
+                self.values['ID'].append(ID)
 
-            # NAtoms
-            NAtoms = self.__Equals2('NAtoms', file_content)
-            self.values['NAtoms'].append(NAtoms)
+                # NAtoms
+                NAtoms = self.__Equals2('NAtoms', file_content)
+                self.values['NAtoms'].append(NAtoms)
 
-            # Ne
-            Ne = self.__electron_number(file_content)
-            self.values['Ne'].append(Ne)
+                # Ne
+                Ne = self.__electron_number(file_content)
+                self.values['Ne'].append(Ne)
 
-            # Homo, Lumo, orbital_energies
-            (Homo4, Homo3, Homo2, Homo1, Homo, Lumo, Lumo1, Lumo2, Lumo3, Lumo4, energies, factor) = self.__orbitals(file_content)
-            self.values['Homo-4'].append(Homo4)
-            self.values['Homo-3'].append(Homo3)
-            self.values['Homo-2'].append(Homo2)
-            self.values['Homo-1'].append(Homo1)
-            self.values['Homo'].append(Homo)
-            self.values['Lumo'].append(Lumo)
-            self.values['Lumo+1'].append(Lumo1)
-            self.values['Lumo+2'].append(Lumo2)
-            self.values['Lumo+3'].append(Lumo3)
-            self.values['Lumo+4'].append(Lumo4)
-            self.values['Factor'].append(factor)
+                # Homo, Lumo, orbital_energies
+                (Homo4, Homo3, Homo2, Homo1, Homo, Lumo, Lumo1, Lumo2, Lumo3, Lumo4, energies, factor) = self.__orbitals(file_content)
+                self.values['Homo-4'].append(Homo4)
+                self.values['Homo-3'].append(Homo3)
+                self.values['Homo-2'].append(Homo2)
+                self.values['Homo-1'].append(Homo1)
+                self.values['Homo'].append(Homo)
+                self.values['Lumo'].append(Lumo)
+                self.values['Lumo+1'].append(Lumo1)
+                self.values['Lumo+2'].append(Lumo2)
+                self.values['Lumo+3'].append(Lumo3)
+                self.values['Lumo+4'].append(Lumo4)
+                self.values['Factor'].append(factor)
 
-            self.energies[ID] = pd.Series(energies)
+                self.energies[ID] = pd.Series(energies)
 
-            # HF
-            HFe = self.__Equals2('ETot', file_content)
-            if HFe == None:
-                HFe = self.__Equals2('HF', file_content)
-                self.values['HF'].append(HFe)
-            else:
-                self.values['HF'].append(HFe)
+                # HF
+                HFe = self.__Equals2('ETot', file_content)
+                if HFe == None:
+                    HFe = self.__Equals2('HF', file_content)
+                    self.values['HF'].append(HFe)
+                else:
+                    self.values['HF'].append(HFe)
 
-            # ET
-            ET = self.__Equals2('ET', file_content)
-            if ET != None:
-                self.values['ET'].append(float(ET)/float(Ne))
-            else:
-                self.values['ET'].append('NaN')
+                # ET
+                ET = self.__Equals2('ET', file_content)
+                if ET != None:
+                    self.values['ET'].append(float(ET)/float(Ne))
+                else:
+                    self.values['ET'].append('NaN')
 
-            # EV
-            EV = self.__Equals2('EV', file_content)
-            if EV != None:
-                self.values['EV'].append(float(EV)/float(Ne))
-            else:
-                self.values['EV'].append('NaN')
-            # EJ
-            EJ = self.__Equals2('EJ', file_content)
-            if EJ != None:
-                self.values['EJ'].append(float(EJ)/float(Ne))
-            else:
-                self.values['EJ'].append('NaN')
+                # EV
+                EV = self.__Equals2('EV', file_content)
+                if EV != None:
+                    self.values['EV'].append(float(EV)/float(Ne))
+                else:
+                    self.values['EV'].append('NaN')
+                # EJ
+                EJ = self.__Equals2('EJ', file_content)
+                if EJ != None:
+                    self.values['EJ'].append(float(EJ)/float(Ne))
+                else:
+                    self.values['EJ'].append('NaN')
 
-            # EK
-            EK = self.__Equals2('EK', file_content)
-            if EK != None:
-                self.values['EK'].append(float(EK)/float(Ne))
-            else:
-                self.values['EK'].append('NaN')
+                # EK
+                EK = self.__Equals2('EK', file_content)
+                if EK != None:
+                    self.values['EK'].append(float(EK)/float(Ne))
+                else:
+                    self.values['EK'].append('NaN')
 
-            # ENuc
-            ENuc = self.__Equals2('ENuc', file_content)
-            if ENuc != None:
-                self.values['ENuc'].append(float(ENuc)/float(Ne))
-            else:
-                self.values['ENuc'].append('NaN')
+                # ENuc
+                ENuc = self.__Equals2('ENuc', file_content)
+                if ENuc != None:
+                    self.values['ENuc'].append(float(ENuc)/float(Ne))
+                else:
+                    self.values['ENuc'].append('NaN')
 
-            # Dipole moment
-            Dm = self.__Equals2('Tot', file_content)
-            if Dm != None:
-                self.values['Dipole'].append(Dm)
-            else:
-                self.values['Dipole'].append('NaN')
+                # Dipole moment
+                Dm = self.__Equals2('Tot', file_content)
+                if Dm != None:
+                    self.values['Dipole'].append(Dm)
+                else:
+                    self.values['Dipole'].append('NaN')
 
-            # Volume
-            Vol = self.__Volume(file_content)
-            if Vol != None:
-                self.values['Volume'].append(Vol)
-            else:
-                self.values['Volume'].append('NaN')
+                # Volume
+                Vol = self.__Volume(file_content)
+                if Vol != None:
+                    self.values['Volume'].append(Vol)
+                else:
+                    self.values['Volume'].append('NaN')
 
-            # Point group
-            group = self.__point_group(file_content)
-            if group != None:
-                self.values['Pgroup'].append(group)
-            else:
-                self.values['Pgroup'].append('NaN')
+                # Point group
+                group = self.__point_group(file_content)
+                if group != None:
+                    self.values['Pgroup'].append(group)
+                else:
+                    self.values['Pgroup'].append('NaN')
 
-            # Coordinates
-            dipole, quadrupole = self.__coordinates(file_content)
-            
-            for coordinates in (dipole, quadrupole):
-                for value in coordinates:
-                    name = value[0]
-                    self.values[name].append(float(value[1]))
-            
-            pbar_HF.update()
-        
+                # Coordinates
+                dipole, quadrupole = self.__coordinates(file_content)
+                
+                for coordinates in (dipole, quadrupole):
+                    for value in coordinates:
+                        name = value[0]
+                        self.values[name].append(float(value[1]))
+                
+                pbar_HF.update()
+        except:
+            print(file)
+            raise
+
         print('\n')
         pbar_CI = tqdm(total=len(CI), desc='CI files', colour='cyan')
 
