@@ -16,6 +16,7 @@ class TerminationChecker():
     '''
     def __init__(self, input_path):
         self.NORMAL = 'Normal termination'
+        self.sep = os.sep
         
         # Valuable re variables
         self.normal_re = re.compile(self.NORMAL)
@@ -60,7 +61,7 @@ class TerminationChecker():
             search = str(self.normal_re.search(str(lines[len(lines)-1])))
 
             if search == 'None':
-                index = file.rfind('/') + 1
+                index = file.rfind(self.sep) + 1
                 t_file = file[index::]
                 # file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
                 file_name = t_file.replace('.log', '')
@@ -88,7 +89,7 @@ class TerminationChecker():
             search = str(self.normal_re.search(str(lines[len(lines)-1])))
 
             if search == 'None':
-                index = file.rfind('/') + 1
+                index = file.rfind(self.sep) + 1
                 t_file = file[index::]
                 # file_name = re.search(r'[/\\]([A-Z0-9]+[_a-z]*.log)', file).group(1)
                 file_name = t_file.replace('.log', '')

@@ -42,6 +42,7 @@ class MainLogReader():
             'Factor', 'X', 'Y', 'Z', 'XX', 'YY', 'ZZ',
             'XY', 'XZ', 'YZ'
         ]
+        self.sep = os.sep
                 
     def get_by_index(self, list, index):
         try:
@@ -256,11 +257,13 @@ class MainLogReader():
         
         CI = []
         HF = []
-        for fileHF in HFt:
-            for fileCI in CIt:
-                if fileCI[fileCI.rfind('/')+1::] in fileHF:
+        print(f"Preparing files...")
+        for fileHF in set(HFt):
+            for fileCI in set(CIt):
+                if fileCI[fileCI.rfind(self.sep)+1::] in fileHF:
                     CI.append(fileCI)
                     HF.append(fileHF)
+                    break
 
         return HF, CI
             
@@ -274,7 +277,7 @@ class MainLogReader():
         get (`bool`)
             if get return self.values, default is False
         '''
-        print('Initializing...\n')
+        print('Initializing...')
         self.__build_structure()
 
         HF, CI = self.__get_files()
@@ -287,7 +290,7 @@ class MainLogReader():
                     file_content = log_file.readlines()
                 
                 # Identifiers
-                index = file.rfind('/') + 1
+                index = file.rfind(self.sep) + 1
                 t_file = file[index::]
 
                 ID = t_file.replace('.log', '')

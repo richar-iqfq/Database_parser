@@ -13,6 +13,7 @@ class MolBuilder():
 	def __init__(self, output_path):
 		self.output_xyz = os.path.join(output_path, 'xyz_molecules')
 		self.output_img = os.path.join(output_path, 'img_molecules')
+		self.sep = os.sep
 
 		if not os.path.isdir(self.output_xyz):
 			os.makedirs(self.output_xyz)
@@ -117,7 +118,7 @@ class MolBuilder():
 
 		xyz_file = self.__gen_xyz(matrix_corrected)
 
-		file_name = file.split('/')[-1]
+		file_name = file.split(self.sep)[-1]
 		xyz_name = file_name.replace('.log', '.xyz')
 
 		output_file = os.path.join(self.output_xyz, xyz_name)
@@ -159,7 +160,7 @@ class MolBuilder():
 			img.show('img')
 
 		if save:
-			file_name = xyz_file.split('/')[-1]
+			file_name = xyz_file.split(self.sep)[-1]
 			jpg_name = file_name.replace('.xyz', '.jpg')
 			output_file = os.path.join(self.output_img, jpg_name)
 			
