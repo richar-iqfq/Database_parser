@@ -2,6 +2,9 @@ import os
 import re
 from rdkit import Chem
 from rdkit.Chem import Draw, rdDetermineBonds
+from rdkit import RDLogger
+
+RDLogger.DisableLog('rdApp.*')
 
 class MolBuilder():
 	'''
@@ -155,8 +158,9 @@ class MolBuilder():
 		if not conn_mol:
 			return None
 
+		img = Draw.MolToImage(conn_mol)
+
 		if show:
-			img = Draw.MolToImage(conn_mol)
 			img.show('img')
 
 		if save:
@@ -164,4 +168,5 @@ class MolBuilder():
 			jpg_name = file_name.replace('.xyz', '.jpg')
 			output_file = os.path.join(self.output_img, jpg_name)
 			
-			Draw.MolToImageFile(conn_mol, output_file)
+			# Draw.MolToImageFile(conn_mol, output_file)
+			img.save(output_file)

@@ -134,7 +134,7 @@ class MainLogReader():
 
         RE_equalsto = equals_to_pattern.format(keyword)
         
-        if keyword == 'DE\(Corr\)':
+        if keyword == r'DE\(Corr\)':
             matches = []
             for line in file_content:
                 match = re.search(RE_equalsto, line)
@@ -395,19 +395,21 @@ class MainLogReader():
         except:
             print(file)
             raise
-
-        print('\n')
+        
+        pbar_HF.close()
         pbar_CI = tqdm(total=len(CI), desc='CI files', colour='cyan')
 
         for file in CI:
             with open(file, 'r') as log_file:
                 file_content = log_file.readlines()
 
-            CIE = self.__Equals2('DE\(Corr\)', file_content)
+            CIE = self.__Equals2(r'DE\(Corr\)', file_content)
 
             self.values['CIe'].append(CIE)
 
             pbar_CI.update()
+
+        pbar_CI.close()
 
         if get:
             return self.values
